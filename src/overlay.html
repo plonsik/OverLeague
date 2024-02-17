@@ -1,109 +1,201 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dynamic Window</title>
     <style>
-        @font-face {
-            font-family: 'Beaufort';
-            src: url('../dist/fonts/BeaufortforLOL-Bold.ttf') format('truetype')
-        }
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background: linear-gradient(#091428, #0A1428);
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+      @font-face {
+        font-family: "Beaufort";
+        src: url("fonts/BeaufortforLOL-Bold.ttf") format("truetype");
+      }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: linear-gradient(#091428, #0a1428);
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border-top: 1px solid #c89b3c;
+      }
+      .logo {
+        height: 94px;
+        color: #cdfafa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Beaufort, serif;
+      }
+      .player {
+        display: flex;
+        flex-direction: column;
+        height: 59px;
+        border-bottom: 1px solid #785a28;
+        padding: 10px;
+        font-family: "Beaufort", serif;
+      }
+      .player > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 50%;
+      }
+      .nick,
+      .rank,
+      .wr,
+      .cwr {
+        color: #c89b3c;
+        font-family: "Beaufort", serif;
+      }
+      .rank,
+      .cwr {
+        color: #c8aa6e;
+      }
+      .match-history {
+        display: flex;
+        justify-content: flex-start;
+      }
 
-        }
-        .logo{
-            height: 94px;
-            color: #CDFAFA;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Beaufort,serif;
-        }
-        .player {
-            display: flex;
-            flex-direction: column;
-            height: 59px;
-            border-bottom: 1px solid #785A28;
-            padding: 10px;
-            font-family: 'Beaufort', serif;
-        }
-        .player > div { /* Flex container for each row */
-            display: flex;
-            justify-content: space-between; /* Space out the child elements */
-            align-items: center;
-            height: 50%;
-        }
-        .nick, .rank, .wr, .cwr {
-            color: #C89B3C;
-            font-family: 'Beaufort', serif;
-        }
-        .rank, .cwr {
-            color: #C8AA6E;
-        }
+      .match {
+        width: 10px;
+        height: 10px;
+        margin-right: 2px;
+      }
+
+      .won {
+        background-color: #28a745;
+      }
+
+      .lost {
+        background-color: #dc3545;
+      }
     </style>
-</head>
-<body>
-<div class="container">
-    <div class="logo">
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
         <h2>OverLeague</h2>
-    </div>
-    <div class="player">
+      </div>
+      <div class="player">
         <div>
-            <h4 class="nick">Player 1</h4>
-            <h5 class="wr">50% WR</h5> <!-- Win rate -->
+          <h4 class="nick">Player 1</h4>
+          <h5 class="wr">50% WR</h5>
         </div>
         <div>
-            <h5 class="rank">Bronze 1</h5>
-            <h5 class="cwr">60% CWR</h5> <!-- Champion win rate -->
+          <h5 class="rank">Bronze 1</h5>
+          <h5 class="cwr">60% CWR</h5>
         </div>
-    </div>    <div class="player">
-    <div>
-        <h4 class="nick">Player 1</h4>
-        <h5 class="wr">50% WR</h5> <!-- Win rate -->
+          <div class="match-history">
+              <div class="match won"></div>
+              <div class="match lost"></div>
+              <div class="match lost"></div>
+              <div class="match lost"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match lost"></div>
+          </div>
+      </div>
+      <div class="player">
+        <div>
+          <h4 class="nick">Player 1</h4>
+          <h5 class="wr">50% WR</h5>
+        </div>
+        <div>
+          <h5 class="rank">Bronze 1</h5>
+          <h5 class="cwr">60% CWR</h5>
+        </div>
+        <div class="match-history">
+          <div class="match won"></div>
+          <div class="match lost"></div>
+          <div class="match lost"></div>
+          <div class="match lost"></div>
+          <div class="match won"></div>
+          <div class="match won"></div>
+          <div class="match won"></div>
+          <div class="match won"></div>
+          <div class="match won"></div>
+          <div class="match won"></div>
+            <div class="match lost"></div>
+        </div>
+      </div>
+      <div class="player">
+        <div>
+          <h4 class="nick">Player 1</h4>
+          <h5 class="wr">50% WR</h5>
+        </div>
+        <div>
+          <h5 class="rank">Bronze 1</h5>
+          <h5 class="cwr">60% CWR</h5>
+        </div>
+        <div class="match-history">
+          <div class="match won"></div>
+          <div class="match lost"></div>
+          <div class="match lost"></div>
+          <div class="match lost"></div>
+          <div class="match won"></div>
+          <div class="match won"></div>
+          <div class="match won"></div>
+          <div class="match won"></div>
+          <div class="match won"></div>
+          <div class="match won"></div>
+            <div class="match lost"></div>
+        </div>
+      </div>
+      <div class="player">
+        <div>
+          <h4 class="nick">Player 1</h4>
+          <h5 class="wr">50% WR</h5>
+        </div>
+        <div>
+          <h5 class="rank">Bronze 1</h5>
+          <h5 class="cwr">60% CWR</h5>
+        </div>
+          <div class="match-history">
+              <div class="match won"></div>
+              <div class="match lost"></div>
+              <div class="match lost"></div>
+              <div class="match lost"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match lost"></div>
+          </div>
+      </div>
+      <div class="player">
+        <div>
+          <h4 class="nick">Player 1</h4>
+          <h5 class="wr">50% WR</h5>
+        </div>
+        <div>
+          <h5 class="rank">Bronze 1</h5>
+          <h5 class="cwr">60% CWR</h5>
+        </div>
+          <div class="match-history">
+              <div class="match won"></div>
+              <div class="match lost"></div>
+              <div class="match lost"></div>
+              <div class="match lost"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match won"></div>
+              <div class="match lost"></div>
+          </div>
+      </div>
     </div>
-    <div>
-        <h5 class="rank">Bronze 1</h5>
-        <h5 class="cwr">60% CWR</h5> <!-- Champion win rate -->
-    </div>
-</div>    <div class="player">
-    <div>
-        <h4 class="nick">Player 1</h4>
-        <h5 class="wr">50% WR</h5> <!-- Win rate -->
-    </div>
-    <div>
-        <h5 class="rank">Bronze 1</h5>
-        <h5 class="cwr">60% CWR</h5> <!-- Champion win rate -->
-    </div>
-</div>    <div class="player">
-    <div>
-        <h4 class="nick">Player 1</h4>
-        <h5 class="wr">50% WR</h5> <!-- Win rate -->
-    </div>
-    <div>
-        <h5 class="rank">Bronze 1</h5>
-        <h5 class="cwr">60% CWR</h5> <!-- Champion win rate -->
-    </div>
-</div>    <div class="player">
-    <div>
-        <h4 class="nick">Player 1</h4>
-        <h5 class="wr">50% WR</h5> <!-- Win rate -->
-    </div>
-    <div>
-        <h5 class="rank">Bronze 1</h5>
-        <h5 class="cwr">60% CWR</h5> <!-- Champion win rate -->
-    </div>
-</div>
-</div>
-</body>
+  </body>
 </html>

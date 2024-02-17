@@ -3,10 +3,8 @@ import find from "find-process";
 import ps from "ps-node";
 import { LCUArguments } from "../types";
 import ffi from "ffi-napi";
-import ref from "ref-napi";
 import Struct from "ref-struct-napi";
 
-// Define the RECT structure for window bounds
 const Rect = Struct({
   left: "long",
   top: "long",
@@ -14,7 +12,6 @@ const Rect = Struct({
   bottom: "long",
 });
 
-// Load user32.dll functions
 const user32 = ffi.Library("user32", {
   FindWindowA: ["long", ["string", "string"]],
   GetWindowRect: ["bool", ["long", "pointer"]],
