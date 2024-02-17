@@ -10,15 +10,7 @@ import { clearInterval } from "timers";
 
 app.on("ready", async () => {
   console.log("App is ready");
-  let dynamicWindow = new BrowserWindow({
-    width: 200,
-    height: 720,
-    frame: false,
-    webPreferences: {
-      nodeIntegration: true,
-    },
-  });
-  await dynamicWindow.loadFile("overlay.html");
+
   const pollingInterval = 2000;
   const positionPollingInterval = 10;
   let positionPollingStarted = false;
@@ -29,7 +21,22 @@ app.on("ready", async () => {
       const lcu_name = getLCUName();
       const isAvailable = await LCUAvailable(lcu_name);
       if (isAvailable) {
+        clearInterval(LCUPooling);
         if (!positionPollingStarted) {
+          let dynamicWindow = new BrowserWindow({
+            width: 200,
+            height: 720,
+            frame: false,
+            webPreferences: {
+              nodeIntegration: true,
+            },
+          });
+
+          await dynamicWindow.loadFile("overlay.html");
+
+          dynamicWindow.once("ready-to-show", () => {
+            dynamicWindow.show();
+          });
           positionPollingStarted = true;
           positionInterval = setInterval(async () => {
             try {

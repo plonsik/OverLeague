@@ -1,0 +1,8 @@
+/dist/
+/node_modules/
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/OverLeague.iml
+/.idea/prettier.xml
+/.idea/vcs.xml
