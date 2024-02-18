@@ -7,6 +7,7 @@ import {
     getLCUArguments,
 } from './utils/LCU'
 import { LCUArguments } from './types'
+import path from 'path'
 
 let dynamicWindow: BrowserWindow | null = null
 
@@ -15,20 +16,21 @@ const createWindow = async () => {
     const isAvailable = await LCUAvailable(lcu_name)
 
     if (isAvailable && !dynamicWindow) {
+        const LCUArguments = await getLCUArguments(lcu_name)
         dynamicWindow = new BrowserWindow({
-            width: 200,
+            width: 300,
             height: 720,
             frame: false,
             webPreferences: {
-                nodeIntegration: true,
-                contextIsolation: false,
+                preload: path.join(__dirname, 'utils/preload.js'),
+                nodeIntegration: false,
+                contextIsolation: true,
             },
         })
 
         await dynamicWindow.loadFile('renderer/overlay.html')
         dynamicWindow.once('ready-to-show', () => dynamicWindow?.show())
         dynamicWindow.on('closed', () => (dynamicWindow = null))
-        const LCUArguments = await getLCUArguments(lcu_name)
 
         startUpdatingWindowPosition()
 
@@ -45,9 +47,9 @@ const startUpdatingWindowPosition = () => {
         try {
             const positionAndSize = await getLCUWindowPositionAndSize()
             dynamicWindow.setBounds({
-                x: positionAndSize.x - 200,
+                x: positionAndSize.x - 300,
                 y: positionAndSize.y,
-                width: 200,
+                width: 300,
                 height: positionAndSize.height,
             })
         } catch (error) {
