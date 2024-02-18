@@ -8,6 +8,13 @@ export interface LCUArguments {
 
 export interface IElectronAPI {
     loadPreferences: () => Promise<void>
+
+    receive(
+        lobbyStatus: string,
+        param2: (lobbyData: { participants: Participant[] } | null) => void
+    ): void
+
+    openLink(opggMultiLink: string): void
 }
 
 declare global {

@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { Worker } from 'worker_threads'
 import {
-    LCUAvailable,
+    isLCUAvailable,
     getLCUWindowPositionAndSize,
     getLCUName,
     getLCUArguments,
@@ -13,7 +13,7 @@ let dynamicWindow: BrowserWindow | null = null
 
 const createWindow = async () => {
     const lcu_name = getLCUName()
-    const isAvailable = await LCUAvailable(lcu_name)
+    const isAvailable = await isLCUAvailable(lcu_name)
 
     if (isAvailable && !dynamicWindow) {
         const LCUArguments = await getLCUArguments(lcu_name)
