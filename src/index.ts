@@ -31,7 +31,7 @@ const createWindow = async () => {
         await dynamicWindow.loadFile('renderer/overlay.html')
         dynamicWindow.once('ready-to-show', () => dynamicWindow?.show())
         dynamicWindow.on('closed', () => (dynamicWindow = null))
-        dynamicWindow.webContents.openDevTools()
+        //dynamicWindow.webContents.toggleDevTools()
         startUpdatingWindowPosition()
 
         startLobbyStatusChecks(LCUArguments)
@@ -47,9 +47,9 @@ const startUpdatingWindowPosition = () => {
         try {
             const positionAndSize = await getLCUWindowPositionAndSize()
             dynamicWindow.setBounds({
-                x: positionAndSize.x - 730,
+                x: positionAndSize.x - 230,
                 y: positionAndSize.y,
-                width: 730,
+                width: 230,
                 height: positionAndSize.height,
             })
         } catch (error) {

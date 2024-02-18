@@ -7,7 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
 }

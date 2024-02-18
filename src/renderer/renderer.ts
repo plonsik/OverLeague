@@ -1,4 +1,8 @@
-import { Participant } from '../types'
+interface Participant {
+    game_name: string
+    game_tag: string
+    activePlatform: string | null
+}
 
 function updateLobby(lobbyData: { participants: Participant[] } | null): void {
     if (!lobbyData) return
