@@ -25,5 +25,6 @@
     "@types/ps-node": "^0.1.3",
     "@types/ref-napi": "^3.0.12",
     "electron-rebuild": "^3.2.9"
-  }
+  },
+  "typings": "types.d.ts"
 }

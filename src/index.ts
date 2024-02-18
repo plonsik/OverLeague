@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { Worker } from 'worker_threads'
 import {
     LCUAvailable,
@@ -18,7 +18,7 @@ const createWindow = async () => {
     if (isAvailable && !dynamicWindow) {
         const LCUArguments = await getLCUArguments(lcu_name)
         dynamicWindow = new BrowserWindow({
-            width: 300,
+            width: 230,
             height: 720,
             frame: false,
             webPreferences: {
@@ -31,7 +31,7 @@ const createWindow = async () => {
         await dynamicWindow.loadFile('renderer/overlay.html')
         dynamicWindow.once('ready-to-show', () => dynamicWindow?.show())
         dynamicWindow.on('closed', () => (dynamicWindow = null))
-
+        dynamicWindow.webContents.openDevTools()
         startUpdatingWindowPosition()
 
         startLobbyStatusChecks(LCUArguments)
@@ -47,9 +47,9 @@ const startUpdatingWindowPosition = () => {
         try {
             const positionAndSize = await getLCUWindowPositionAndSize()
             dynamicWindow.setBounds({
-                x: positionAndSize.x - 300,
+                x: positionAndSize.x - 730,
                 y: positionAndSize.y,
-                width: 300,
+                width: 730,
                 height: positionAndSize.height,
             })
         } catch (error) {
@@ -71,6 +71,7 @@ const startLobbyStatusChecks = (LCUArguments: LCUArguments) => {
 
     worker.on('message', (message: any) => {
         if (message.success && dynamicWindow) {
+            console.log(message.lobbyData)
             dynamicWindow.webContents.send('lobby-status', message.lobbyData)
         }
     })
@@ -87,9 +88,15 @@ const startLobbyStatusChecks = (LCUArguments: LCUArguments) => {
 
     setInterval(() => {
         worker.postMessage(LCUArguments)
-    }, 2000)
+    }, 1000)
 }
-
+ipcMain.handle('openLink', async (event, url) => {
+    try {
+        await shell.openExternal(url)
+    } catch (err) {
+        console.error('Failed to open external link:', err)
+    }
+})
 app.on('ready', () => {
     console.log('App is ready')
     setInterval(createWindow, 2000)

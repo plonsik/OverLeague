@@ -1,22 +1,76 @@
-import ipcRenderer = Electron.ipcRenderer
-import { Player, PlayerSubset } from '../types'
+import { Participant } from '../types'
 
-ipcRenderer.on('lobby-status', (event, lobbyData) => {
-    console.log('Lobby Data Received:', lobbyData)
-    const players = filterUniquePlayers(lobbyData)
-    console.log('players: ', players)
-    updateLobbyUI(lobbyData)
-})
+function updateLobby(lobbyData: { participants: Participant[] } | null): void {
+    if (!lobbyData) return
 
-function updateLobbyUI(lobbyData: any) {}
+    const activeParticipants = lobbyData.participants.filter(
+        (participant) => participant.activePlatform !== null
+    )
 
-function filterUniquePlayers(lobbyData: Player[]): PlayerSubset[] {
-    const uniqueNames: { [name: string]: PlayerSubset } = {}
+    for (let i = 1; i <= 5; i++) {
+        const playerElement = document.getElementById(`player${i}`)
+        const nicknameElement = playerElement?.querySelector('.nick')
 
-    lobbyData.forEach((player) => {
-        const { name, game_tag, region } = player
-        uniqueNames[name] = { name, game_tag, region }
+        if (i <= activeParticipants.length) {
+            const participant = activeParticipants[i - 1]
+            const fullNickname = `${participant.game_name}#${participant.game_tag}`
+            nicknameElement!.textContent = fullNickname
+        } else {
+            nicknameElement!.textContent = '---'
+        }
+    }
+}
+
+function createOPGGMultiSearchLink(names: string[]): string {
+    return `https://www.op.gg/multisearch/eune?summoners=${names
+        .map((name) => encodeURIComponent(name))
+        .join(',')}`
+}
+
+function createUGGMultiSearchLink(names: string[]): string {
+    return `https://u.gg/multisearch?summoners=${names
+        .map((name) => encodeURIComponent(name))
+        .join(',')}&region=eun1`
+}
+
+window.electronAPI.receive(
+    'lobby-status',
+    (lobbyData: { participants: Participant[] } | null) => {
+        updateLobby(lobbyData)
+    }
+)
+
+document
+    .getElementById('generateOPGGLinksBtn')
+    ?.addEventListener('click', () => {
+        window.electronAPI.receive(
+            'lobby-status',
+            (lobbyData: { participants: Participant[] } | null) => {
+                if (lobbyData) {
+                    const summonerNames = lobbyData.participants.map(
+                        (p) => `${p.game_name}#${p.game_tag}`
+                    )
+                    const opggMultiLink =
+                        createOPGGMultiSearchLink(summonerNames)
+                    window.electronAPI.openLink(opggMultiLink)
+                }
+            }
+        )
     })
 
-    return Object.values(uniqueNames)
-}
+document
+    .getElementById('generateUGGLinksBtn')
+    ?.addEventListener('click', () => {
+        window.electronAPI.receive(
+            'lobby-status',
+            (lobbyData: { participants: Participant[] } | null) => {
+                if (lobbyData) {
+                    const summonerNames = lobbyData.participants.map(
+                        (p) => `${p.game_name}#${p.game_tag}`
+                    )
+                    const uggMultiLink = createUGGMultiSearchLink(summonerNames)
+                    window.electronAPI.openLink(uggMultiLink)
+                }
+            }
+        )
+    })

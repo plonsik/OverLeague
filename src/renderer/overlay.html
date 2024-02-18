@@ -66,7 +66,28 @@
             }
             .multisearch {
                 height: 20%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
             }
+
+            .multisearch button {
+                width: 70px;
+                height: 70px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: none;
+                border: 1px solid white;
+                margin: 0 20px;
+            }
+
+            .multisearch button img {
+                max-width: 100%;
+                max-height: 100%;
+            }
+
         </style>
     </head>
     <body>
@@ -126,62 +147,16 @@
                     </div>
                 </div>
             </div>
-            <div class="multisearch">multisearch</div>
+            <div class="multisearch">
+                <button  id="generateOPGGLinksBtn">
+                    <img src="../assets/opgg.png"/>
+                </button>
+                <button  id="generateUGGLinksBtn">
+                    <img src="../assets/ugg.jpg"/>
+                </button>
+                <div id="linksContainer" class="links-container"></div>
+            </div>
         </div>
-        <script>
-            window.electronAPI.receive('lobby-status', (lobbyData) => {
-                if (!lobbyData) {
-                    // If lobbyData is null, clear all nicknames
-                    for (let i = 1; i <= 5; i++) {
-                        const playerElement = document.getElementById(
-                            `player${i}`
-                        )
-                        if (playerElement) {
-                            const nicknameElement =
-                                playerElement.querySelector('.nick')
-                            nicknameElement.textContent = '---'
-                        }
-                    }
-                } else {
-                    // If lobbyData is not null, proceed with processing the data
-                    const participants = lobbyData.participants
-                    const uniqueNicknames = new Set()
-                    let playerCounter = 0
-
-                    participants.forEach((participant) => {
-                        const fullNickname = `${participant.game_name}#${participant.game_tag}`
-
-                        if (
-                            !uniqueNicknames.has(fullNickname) &&
-                            playerCounter < 5
-                        ) {
-                            uniqueNicknames.add(fullNickname)
-
-                            const playerElement = document.getElementById(
-                                `player${playerCounter + 1}`
-                            )
-                            if (playerElement) {
-                                const nicknameElement =
-                                    playerElement.querySelector('.nick')
-                                nicknameElement.textContent = fullNickname
-                                playerCounter++
-                            }
-                        }
-                    })
-
-                    // If there are fewer than 5 unique participants, fill the remaining slots with '---'
-                    for (let i = playerCounter; i < 5; i++) {
-                        const playerElement = document.getElementById(
-                            `player${i + 1}`
-                        )
-                        if (playerElement) {
-                            const nicknameElement =
-                                playerElement.querySelector('.nick')
-                            nicknameElement.textContent = '---'
-                        }
-                    }
-                }
-            })
-        </script>
+        <script src="renderer.js"></script>
     </body>
 </html>
