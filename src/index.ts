@@ -1,83 +1,94 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow } from 'electron'
+import { Worker } from 'worker_threads'
 import {
-  getLCUArguments,
-  LCUAvailable,
-  getLCUWindowPositionAndSize,
-  getLCUName,
-} from "./utils/LCU";
-import { checkForLobby, getCurrentSummoner } from "./utils/requests";
-import { clearInterval } from "timers";
+    LCUAvailable,
+    getLCUWindowPositionAndSize,
+    getLCUName,
+    getLCUArguments,
+} from './utils/LCU'
+import { LCUArguments } from './types'
 
-app.on("ready", async () => {
-  console.log("App is ready");
+let dynamicWindow: BrowserWindow | null = null
 
-  const pollingInterval = 2000;
-  const positionPollingInterval = 10;
-  let positionPollingStarted = false;
-  let positionInterval: string | number | NodeJS.Timeout | undefined;
+const createWindow = async () => {
+    const lcu_name = getLCUName()
+    const isAvailable = await LCUAvailable(lcu_name)
 
-  const LCUPooling = setInterval(async () => {
-    try {
-      const lcu_name = getLCUName();
-      const isAvailable = await LCUAvailable(lcu_name);
-      if (isAvailable) {
-        clearInterval(LCUPooling);
-        if (!positionPollingStarted) {
-          let dynamicWindow = new BrowserWindow({
+    if (isAvailable && !dynamicWindow) {
+        dynamicWindow = new BrowserWindow({
             width: 200,
             height: 720,
             frame: false,
             webPreferences: {
-              nodeIntegration: true,
+                nodeIntegration: true,
+                contextIsolation: false,
             },
-          });
+        })
 
-          await dynamicWindow.loadFile("overlay.html");
+        await dynamicWindow.loadFile('renderer/overlay.html')
+        dynamicWindow.once('ready-to-show', () => dynamicWindow?.show())
+        dynamicWindow.on('closed', () => (dynamicWindow = null))
+        const LCUArguments = await getLCUArguments(lcu_name)
 
-          dynamicWindow.once("ready-to-show", () => {
-            dynamicWindow.show();
-          });
-          positionPollingStarted = true;
-          positionInterval = setInterval(async () => {
-            try {
-              const positionAndSize = await getLCUWindowPositionAndSize();
-              dynamicWindow.setBounds({
+        startUpdatingWindowPosition()
+
+        startLobbyStatusChecks(LCUArguments)
+    }
+}
+
+const startUpdatingWindowPosition = () => {
+    const updatePosition = async () => {
+        if (!dynamicWindow) {
+            return
+        }
+
+        try {
+            const positionAndSize = await getLCUWindowPositionAndSize()
+            dynamicWindow.setBounds({
                 x: positionAndSize.x - 200,
                 y: positionAndSize.y,
                 width: 200,
                 height: positionAndSize.height,
-              });
-            } catch (positionError) {
-              console.error(
-                "Error fetching LCU position and size:",
-                positionError,
-              );
-            }
-          }, positionPollingInterval);
+            })
+        } catch (error) {
+            console.error(
+                'Error fetching LCU position and size:',
+                error instanceof Error ? error.message : String(error)
+            )
+            dynamicWindow.destroy()
+            dynamicWindow = null
         }
 
-        const LCUArguments = await getLCUArguments(lcu_name);
-        const currentSummoner = await getCurrentSummoner(LCUArguments);
-        const data = await checkForLobby(LCUArguments);
-
-        console.log(currentSummoner);
-        console.log(data);
-      } else {
-        console.log("LCU is not available. Waiting...");
-        if (positionPollingStarted) {
-          clearInterval(positionInterval);
-          positionPollingStarted = false;
-        }
-      }
-    } catch (err) {
-      console.error(
-        "Error checking LCU availability or fetching summoner:",
-        err,
-      );
-      clearInterval(LCUPooling);
-      if (positionPollingStarted) {
-        clearInterval(positionInterval);
-      }
+        setImmediate(updatePosition)
     }
-  }, pollingInterval);
-});
+    setImmediate(updatePosition)
+}
+
+const startLobbyStatusChecks = (LCUArguments: LCUArguments) => {
+    const worker = new Worker('./dist/workers/lobby-status-worker.js')
+
+    worker.on('message', (message: any) => {
+        if (message.success && dynamicWindow) {
+            dynamicWindow.webContents.send('lobby-status', message.lobbyData)
+        }
+    })
+
+    worker.on('error', (error: Error) => {
+        console.error('Worker error:', error)
+    })
+
+    worker.on('exit', (code: number) => {
+        if (code !== 0) {
+            console.error(`Worker stopped with exit code ${code}`)
+        }
+    })
+
+    setInterval(() => {
+        worker.postMessage(LCUArguments)
+    }, 2000)
+}
+
+app.on('ready', () => {
+    console.log('App is ready')
+    setInterval(createWindow, 2000)
+})
