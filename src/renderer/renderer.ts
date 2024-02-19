@@ -8,7 +8,13 @@ let uniqueKeys: string[] = []
 
 function updateLobby(lobbyData: { participants: Participant[] } | null): void {
     uniqueKeys = []
+    const waitingForLobby = document.getElementById('waitingForLobby')
+    const lobbyView = document.getElementById('lobbyView')
+
     if (!lobbyData) {
+        waitingForLobby!.style.display = 'flex'
+        lobbyView!.style.display = 'none'
+
         for (let i = 1; i <= 5; i++) {
             const playerElement = document.getElementById(`player${i}`)
             const nicknameElement = playerElement?.querySelector('.nick')
@@ -18,6 +24,11 @@ function updateLobby(lobbyData: { participants: Participant[] } | null): void {
         }
         return
     }
+
+    waitingForLobby!.style.display = 'none'
+    lobbyView!.style.display = 'flex'
+    lobbyView!.style.flexDirection = 'column'
+    lobbyView!.style.height = '90%'
 
     for (const participant of lobbyData.participants) {
         const key = `${participant.game_name}#${participant.game_tag}`

@@ -8,7 +8,7 @@
             @font-face {
                 font-family: 'Beaufort';
                 src: url('../../dist/fonts/BeaufortforLOL-Bold.ttf')
-                    format('truetype');
+                format('truetype');
             }
             body,
             html {
@@ -33,6 +33,51 @@
                 align-items: center;
                 font-family: Beaufort, serif;
             }
+            .waiting-for-lobby {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 90%;
+                font-family: 'Beaufort', serif;
+                font-size: 20px;
+                color:white
+            }
+
+            .spinner {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .dot {
+                width: 10px;
+                height: 10px;
+                background-color: #fff;
+                border-radius: 50%;
+                margin: 0 5px;
+                animation: dotFlashing 1s infinite linear alternate;
+                animation-delay: 0s;
+            }
+
+            .dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+
+            @keyframes dotFlashing {
+                0% {
+                    background-color: #686868;
+                }
+                50%,
+                100% {
+                    background-color: #fff;
+                }
+            }
+
             .players {
                 height: 70%;
                 margin-left: 15px;
@@ -55,13 +100,13 @@
             }
             .nick,
             .rank,
-            .cwr {
+            .kda {
                 color: #f0e6d2;
                 font-family: 'Beaufort', serif;
             }
             .rank,
             .wr,
-            .cwr {
+            .kda {
                 color: #e4dbc8;
             }
             .multisearch {
@@ -78,9 +123,10 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                background: none;
                 border: 1px solid white;
                 margin: 0 20px;
+                cursor: pointer;
+                background: none;
             }
 
             .multisearch button img {
@@ -88,16 +134,13 @@
                 max-height: 100%;
             }
             .dodge-btn {
-                width: 100px;
-                height: 40px;
-                background-color: #d9534f;
+                width: 70px;
+                height: 70px;
+                background-color: #d9534f; !important;
                 color: white;
-                border: none;
-                border-radius: 5px;
                 cursor: pointer;
                 font-family: 'Beaufort', serif;
                 font-size: 16px;
-                margin: 0 20px;
                 transition: background-color 0.3s ease;
             }
 
@@ -111,66 +154,76 @@
             <div class="logo">
                 <h2>OverLeague</h2>
             </div>
-            <div class="players">
-                <div class="player" id="player1">
-                    <div>
-                        <h4 class="nick"></h4>
-                        <h5 class="wr"></h5>
-                    </div>
-                    <div>
-                        <h5 class="rank"></h5>
-                        <h5 class="cwr"></h5>
-                    </div>
-                </div>
-                <div class="player" id="player2">
-                    <div>
-                        <h4 class="nick"></h4>
-                        <h5 class="wr"></h5>
-                    </div>
-                    <div>
-                        <h5 class="rank"></h5>
-                        <h5 class="cwr"></h5>
-                    </div>
-                </div>
-                <div class="player" id="player3">
-                    <div>
-                        <h4 class="nick"></h4>
-                        <h5 class="wr"></h5>
-                    </div>
-                    <div>
-                        <h5 class="rank"></h5>
-                        <h5 class="cwr"></h5>
-                    </div>
-                </div>
-                <div class="player" id="player4">
-                    <div>
-                        <h4 class="nick"></h4>
-                        <h5 class="wr"></h5>
-                    </div>
-                    <div>
-                        <h5 class="rank"></h5>
-                        <h5 class="cwr"></h5>
-                    </div>
-                </div>
-                <div class="player" id="player5">
-                    <div>
-                        <h4 class="nick"></h4>
-                        <h5 class="wr"></h5>
-                    </div>
-                    <div>
-                        <h5 class="rank"></h5>
-                        <h5 class="cwr"></h5>
-                    </div>
+            <div id="waitingForLobby" class="waiting-for-lobby">
+                <p>Waiting for lobby...</p>
+                <div class="spinner">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
                 </div>
             </div>
-            <div class="multisearch">
-                <button  id="generateOPGGLinksBtn">
-                    <img src="../assets/opgg.png"/>
-                </button>
-<!--                <button  id="generateUGGLinksBtn">-->
-<!--                    <img src="../assets/ugg.jpg"/>-->
-<!--                </button>-->
-                <button id="dodgeQueueBtn" class="dodge-btn">Dodge</button>
+            <div id="lobbyView" class="lobby-view" style="display: none">
+                <div class="players">
+                    <div class="player" id="player1">
+                        <div>
+                            <h4 class="nick"></h4>
+                            <h5 class="wr"></h5>
+                        </div>
+                        <div>
+                            <h5 class="rank"></h5>
+                            <h5 class="kda"></h5>
+                        </div>
+                    </div>
+                    <div class="player" id="player2">
+                        <div>
+                            <h4 class="nick"></h4>
+                            <h5 class="wr"></h5>
+                        </div>
+                        <div>
+                            <h5 class="rank"></h5>
+                            <h5 class="kda"></h5>
+                        </div>
+                    </div>
+                    <div class="player" id="player3">
+                        <div>
+                            <h4 class="nick"></h4>
+                            <h5 class="wr"></h5>
+                        </div>
+                        <div>
+                            <h5 class="rank"></h5>
+                            <h5 class="kda"></h5>
+                        </div>
+                    </div>
+                    <div class="player" id="player4">
+                        <div>
+                            <h4 class="nick"></h4>
+                            <h5 class="wr"></h5>
+                        </div>
+                        <div>
+                            <h5 class="rank"></h5>
+                            <h5 class="kda"></h5>
+                        </div>
+                    </div>
+                    <div class="player" id="player5">
+                        <div>
+                            <h4 class="nick"></h4>
+                            <h5 class="wr"></h5>
+                        </div>
+                        <div>
+                            <h5 class="rank"></h5>
+                            <h5 class="kda"></h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="multisearch">
+                    <button id="generateOPGGLinksBtn">
+                        <img src="../assets/opgg.png" />
+                    </button>
+                    <!--                <button  id="generateUGGLinksBtn">-->
+                    <!--                    <img src="../assets/ugg.jpg"/>-->
+                    <!--                </button>-->
+                    <button id="dodgeQueueBtn" class="dodge-btn">Dodge</button>
+                </div>
             </div>
         </div>
         <script src="renderer.js"></script>

@@ -83,8 +83,6 @@ export const getWindow = () => {
 export const showWindow = () => {
     if (overlayWindow) {
         overlayWindow.show()
-    } else {
-        createWindow()
     }
 }
 
