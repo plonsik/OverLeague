@@ -4,10 +4,20 @@ interface Participant {
     activePlatform: string | null
 }
 
-let uniqueKeys: string[] = []
+let uniquePlayers: string[] = []
+let prevLobbyData: { participants: Participant[] } | null = null
 
 function updateLobby(lobbyData: { participants: Participant[] } | null): void {
-    uniqueKeys = []
+    const currentLobbyDataString = JSON.stringify(lobbyData)
+    const prevLobbyDataString = JSON.stringify(prevLobbyData)
+
+    if (currentLobbyDataString === prevLobbyDataString) {
+        return
+    }
+
+    prevLobbyData = lobbyData
+
+    uniquePlayers = []
     const waitingForLobby = document.getElementById('waitingForLobby')
     const lobbyView = document.getElementById('lobbyView')
 
@@ -32,8 +42,11 @@ function updateLobby(lobbyData: { participants: Participant[] } | null): void {
 
     for (const participant of lobbyData.participants) {
         const key = `${participant.game_name}#${participant.game_tag}`
-        if (participant.activePlatform !== null && !uniqueKeys.includes(key)) {
-            uniqueKeys.push(key)
+        if (
+            participant.activePlatform !== null &&
+            !uniquePlayers.includes(key)
+        ) {
+            uniquePlayers.push(key)
         }
     }
 
@@ -41,12 +54,31 @@ function updateLobby(lobbyData: { participants: Participant[] } | null): void {
         const playerElement = document.getElementById(`player${i}`)
         const nicknameElement = playerElement?.querySelector('.nick')
 
-        if (i <= uniqueKeys.length) {
-            nicknameElement!.textContent = uniqueKeys[i - 1]
+        if (i <= uniquePlayers.length) {
+            nicknameElement!.textContent = uniquePlayers[i - 1]
         } else {
             nicknameElement!.textContent = ''
         }
     }
+
+    // if (uniqueKeys.length === 5) {
+    //     window.electronAPI.scrapePlayersData(uniqueKeys).then((playersData) => {
+    //         playersData.forEach((data, index) => {
+    //             const playerElement = document.getElementById(
+    //                 `player${index + 1}`
+    //             )
+    //             if (!playerElement) return
+    //
+    //             const wrElement = playerElement.querySelector('.wr')
+    //             const kdaElement = playerElement.querySelector('.kda')
+    //             const rankElement = playerElement.querySelector('.rank')
+    //
+    //             if (wrElement) wrElement.textContent = data.wr ?? 'N/A'
+    //             if (kdaElement) kdaElement.textContent = data.kda ?? 'N/A'
+    //             if (rankElement) rankElement.textContent = data.rank ?? 'N/A'
+    //         })
+    //     })
+    // }
 }
 
 function createOPGGMultiSearchLink(names: string[]): string {
@@ -63,14 +95,14 @@ function createOPGGMultiSearchLink(names: string[]): string {
 document
     .getElementById('generateOPGGLinksBtn')
     ?.addEventListener('click', () => {
-        const opggMultiLink = createOPGGMultiSearchLink(uniqueKeys)
+        const opggMultiLink = createOPGGMultiSearchLink(uniquePlayers)
         window.electronAPI.openLink(opggMultiLink)
     })
 
-document.getElementById('dodgeQueueBtn')?.addEventListener('click', () => {
-    console.log('click')
-    window.electronAPI.quitTeamBuilderDraft
-})
+// document.getElementById('dodgeQueueBtn')?.addEventListener('click', () => {
+//     console.log('click')
+//     window.electronAPI.quitTeamBuilderDraft
+// })
 // document
 //     .getElementById('generateUGGLinksBtn')
 //     ?.addEventListener('click', () => {

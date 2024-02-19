@@ -11,18 +11,22 @@ export function setupIpcHandlers() {
         }
     })
 
-    ipcMain.handle('quitTeamBuilderDraft', async (_) => {
-        try {
-            const LCUArguments = retrieveLCUArguments()
-            console.log(LCUArguments)
-            if (LCUArguments == null) {
-                console.log('LCUArguments are null')
-            } else {
-                const lol = await quitTeamBuilderDraft(LCUArguments)
-                console.log(lol)
-            }
-        } catch (error) {
-            console.error('Error handling quit-team-builder-draft:', error)
-        }
-    })
+    // ipcMain.handle('quitTeamBuilderDraft', async (_) => {
+    //     try {
+    //         const LCUArguments = retrieveLCUArguments()
+    //         if (LCUArguments == null) {
+    //             console.log('LCUArguments are null')
+    //         } else {
+    //             const lol = await quitTeamBuilderDraft(LCUArguments)
+    //             console.log(lol)
+    //         }
+    //     } catch (error) {
+    //         console.error('Error handling quit-team-builder-draft:', error)
+    //     }
+    // })
+
+    // ipcMain.handle('scrapePlayersData', async (_, uniquePlayers) => {
+    //     console.log('Received nicks:', uniquePlayers)
+    //     return await scrapePlayersData(uniquePlayers)
+    // })
 }

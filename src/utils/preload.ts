@@ -9,5 +9,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
         ipcRenderer.on(channel, (_, ...args) => func(...args))
     },
     openLink: (url: string) => ipcRenderer.invoke('openLink', url),
-    quitTeamBuilderDraft: () => ipcRenderer.invoke('quitTeamBuilderDraft'),
+    // quitTeamBuilderDraft: () => ipcRenderer.invoke('quitTeamBuilderDraft'),
+    // scrapePlayersData: (uniquePlayers: string[]) =>
+    //     ipcRenderer.invoke('scrapePlayersData', uniquePlayers),
 })

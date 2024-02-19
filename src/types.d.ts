@@ -17,6 +17,8 @@ export interface IElectronAPI {
     openLink(opggMultiLink: string): void
 
     quitTeamBuilderDraft: () => Promise<any>
+
+    scrapePlayersData: (uniqueKeys: string[]) => Promise<any>
 }
 
 declare global {
