@@ -15,6 +15,8 @@ export interface IElectronAPI {
     ): void
 
     openLink(opggMultiLink: string): void
+
+    quitTeamBuilderDraft: () => Promise<any>
 }
 
 declare global {

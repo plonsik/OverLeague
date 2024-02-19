@@ -7,14 +7,17 @@ import {
 import { BrowserWindow } from 'electron'
 import path from 'path'
 import { startLobbyStatusChecks } from './worker-manager'
+import { LCUArguments } from '../types'
 
 let overlayWindow: BrowserWindow | null = null
+let LCUArguments: LCUArguments | null = null
+
 export const createWindow = async () => {
     const lcu_name = getLCUName()
     const isAvailable = await isLCUAvailable(lcu_name)
 
     if (isAvailable && !overlayWindow) {
-        const LCUArguments = await getLCUArguments(lcu_name)
+        LCUArguments = await getLCUArguments(lcu_name)
         overlayWindow = new BrowserWindow({
             width: 230,
             height: 720,
@@ -89,4 +92,8 @@ export const hideWindow = () => {
     if (overlayWindow) {
         overlayWindow.hide()
     }
+}
+
+export const retrieveLCUArguments = () => {
+    return LCUArguments
 }

@@ -135,9 +135,9 @@ export async function quitTeamBuilderDraft(LCUArguments: LCUArguments) {
 
     try {
         const response = await httpsRequest(url, 'POST', lcu_headers, '')
+        console.log(response)
         return JSON.parse(response)
     } catch (error) {
         console.error('Error quitting Team Builder Draft:', error)
-        throw error
     }
 }

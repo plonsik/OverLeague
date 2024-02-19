@@ -57,6 +57,10 @@ document
         window.electronAPI.openLink(opggMultiLink)
     })
 
+document.getElementById('dodgeQueueBtn')?.addEventListener('click', () => {
+    console.log('click')
+    window.electronAPI.quitTeamBuilderDraft
+})
 // document
 //     .getElementById('generateUGGLinksBtn')
 //     ?.addEventListener('click', () => {
