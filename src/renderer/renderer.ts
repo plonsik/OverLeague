@@ -7,6 +7,7 @@ interface Participant {
 let uniqueKeys: string[] = []
 
 function updateLobby(lobbyData: { participants: Participant[] } | null): void {
+    uniqueKeys = []
     if (!lobbyData) {
         for (let i = 1; i <= 5; i++) {
             const playerElement = document.getElementById(`player${i}`)
@@ -17,8 +18,6 @@ function updateLobby(lobbyData: { participants: Participant[] } | null): void {
         }
         return
     }
-
-    let uniqueKeys: (string | null)[] = []
 
     for (const participant of lobbyData.participants) {
         const key = `${participant.game_name}#${participant.game_tag}`
