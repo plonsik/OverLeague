@@ -15,13 +15,15 @@ const Rect = Struct({
 const user32 = ffi.Library('user32', {
     FindWindowA: ['long', ['string', 'string']],
     GetWindowRect: ['bool', ['long', 'pointer']],
+    GetForegroundWindow: ['long', []],
 })
-
+//TODO: Make it event driven
 export async function getLCUWindowPositionAndSize(): Promise<{
     x: number
     y: number
     width: number
     height: number
+    isForeground: boolean
 }> {
     return new Promise((resolve, reject) => {
         const lcuWindowName = 'League of Legends'
@@ -41,11 +43,15 @@ export async function getLCUWindowPositionAndSize(): Promise<{
             return
         }
 
+        const foregroundHwnd = user32.GetForegroundWindow()
+        const isForeground = hwnd === foregroundHwnd
+
         const positionAndSize = {
             x: rect.left,
             y: rect.top,
             width: rect.right - rect.left,
             height: rect.bottom - rect.top,
+            isForeground,
         }
 
         resolve(positionAndSize)

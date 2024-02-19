@@ -7,9 +7,18 @@ interface Participant {
 let uniqueKeys: string[] = []
 
 function updateLobby(lobbyData: { participants: Participant[] } | null): void {
-    if (!lobbyData) return
+    if (!lobbyData) {
+        for (let i = 1; i <= 5; i++) {
+            const playerElement = document.getElementById(`player${i}`)
+            const nicknameElement = playerElement?.querySelector('.nick')
+            if (nicknameElement) {
+                nicknameElement.textContent = ''
+            }
+        }
+        return
+    }
 
-    uniqueKeys = []
+    let uniqueKeys: (string | null)[] = []
 
     for (const participant of lobbyData.participants) {
         const key = `${participant.game_name}#${participant.game_tag}`
@@ -25,7 +34,7 @@ function updateLobby(lobbyData: { participants: Participant[] } | null): void {
         if (i <= uniqueKeys.length) {
             nicknameElement!.textContent = uniqueKeys[i - 1]
         } else {
-            nicknameElement!.textContent = '---'
+            nicknameElement!.textContent = ''
         }
     }
 }
