@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*@font-face {*/
+/*    font-family: 'Beaufort';*/
+/*    src: url('./fonts/BeaufortforLOL-Bold.ttf');*/
+/*    format('truetype');*/
+/*}*/
+
+/*body,*/
+/*html {*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    height: 100%;*/
+/*    overflow: hidden;*/
+/*    background-color: #010a13;*/
+/*}*/
+/*.container {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    height: 100%;*/
+/*    border-top: 2px solid #785a28;*/
+/*    border-left: 1px solid #1e282d;*/
+/*}*/
+/*.logo {*/
+/*    height: 10%;*/
+/*    color: #cdfafa;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    font-family: Beaufort, serif;*/
+/*}*/
+/*.waiting-for-lobby {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    height: 90%;*/
+/*    font-family: 'Beaufort', serif;*/
+/*    font-size: 20px;*/
+/*    color:white*/
+/*}*/
+
+/*.spinner {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.dot {*/
+/*    width: 10px;*/
+/*    height: 10px;*/
+/*    background-color: #fff;*/
+/*    border-radius: 50%;*/
+/*    margin: 0 5px;*/
+/*    animation: dotFlashing 1s infinite linear alternate;*/
+/*    animation-delay: 0s;*/
+/*}*/
+
+/*.dot:nth-child(2) {*/
+/*    animation-delay: 0.2s;*/
+/*}*/
+
+/*.dot:nth-child(3) {*/
+/*    animation-delay: 0.4s;*/
+/*}*/
+
+/*@keyframes dotFlashing {*/
+/*    0% {*/
+/*        background-color: #686868;*/
+/*    }*/
+/*    50%,*/
+/*    100% {*/
+/*        background-color: #fff;*/
+/*    }*/
+/*}*/
+
+/*.players {*/
+/*    height: 70%;*/
+/*    margin-left: 15px;*/
+/*    margin-right: 15px;*/
+/*}*/
+/*.player {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    height: 20%;*/
+/*    padding-right: 10px;*/
+/*    padding-left: 10px;*/
+/*    border-bottom: 1px solid #785a28;*/
+/*    font-family: 'Beaufort', serif;*/
+/*}*/
+/*.player > div {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*    height: 50%;*/
+/*}*/
+/*.nick,*/
+/*.rank,*/
+/*.kda {*/
+/*    color: #f0e6d2;*/
+/*    font-family: 'Beaufort', serif;*/
+/*}*/
+/*.rank,*/
+/*.wr,*/
+/*.kda {*/
+/*    color: #e4dbc8;*/
+/*}*/
+/*.multisearch {*/
+/*    height: 20%;*/
+/*    display: flex;*/
+/*    flex-direction: row;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*}*/
+
+/*.multisearch button {*/
+/*    width: 70px;*/
+/*    height: 70px;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    border: 1px solid white;*/
+/*    margin: 0 20px;*/
+/*    cursor: pointer;*/
+/*    background: none;*/
+/*}*/
+
+/*.multisearch button img {*/
+/*    max-width: 100%;*/
+/*    max-height: 100%;*/
+/*}*/
+/*.dodge-btn {*/
+/*    width: 70px;*/
+/*    height: 70px;*/
+/*    background-color: #d9534f; !important;*/
+/*    color: white;*/
+/*    cursor: pointer;*/
+/*    font-family: 'Beaufort', serif;*/
+/*    font-size: 16px;*/
+/*    transition: background-color 0.3s ease;*/
+/*}*/
+
+/*.dodge-btn:hover {*/
+/*    background-color: #c9302c;*/
+/*}*/

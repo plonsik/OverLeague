@@ -1,35 +1,42 @@
 export interface LCUArguments {
-    auth_token?: string
-    app_port?: string
-    region?: string
-    riotclient_auth_token?: string
-    riotclient_app_port?: string
+  auth_token?: string;
+  app_port?: string;
+  region?: string;
+  riotclient_auth_token?: string;
+  riotclient_app_port?: string;
 }
 
 export interface IElectronAPI {
-    loadPreferences: () => Promise<void>
+  loadPreferences: () => Promise<void>;
 
-    receive(
-        lobbyStatus: string,
-        param2: (lobbyData: { participants: Participant[] } | null) => void
-    ): void
+  receive(
+    lobbyStatus: string,
+    param2: (lobbyData: { participants: Participant[] } | null) => void,
+  ): void;
 
-    openLink(opggMultiLink: string): void
+  openLink(opggMultiLink: string): void;
 
-    quitTeamBuilderDraft: () => Promise<any>
+  quitTeamBuilderDraft: () => Promise<any>;
 
-    scrapePlayersData: (uniqueKeys: string[]) => Promise<any>
+  scrapePlayersData: (uniqueKeys: string[]) => Promise<any>;
 }
 
 declare global {
-    interface Window {
-        electronAPI: IElectronAPI
-    }
+  interface Window {
+    electronAPI: IElectronAPI;
+  }
 }
 export interface Participant {
-    game_name: string
-    game_tag: string
-    activePlatform: string | null
+  game_name: string;
+  game_tag: string;
+  activePlatform: string | null;
 }
 
-export type CallbackFunction = (...args: any[]) => void
+export type CallbackFunction = (...args: any[]) => void;
+
+// Register the router instance for type safety
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}

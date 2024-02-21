@@ -36,38 +36,38 @@ function httpsRequest(
     })
 }
 
-export async function getCurrentSummoner(
-    LCUArguments: LCUArguments
-): Promise<{ gameName: string; tagLine: string }> {
-    const lcu_api = `https://127.0.0.1:${LCUArguments.app_port}`
-    const lcu_session_token = Buffer.from(
-        `riot:${LCUArguments.auth_token}`
-    ).toString('base64')
-
-    const lcu_headers = {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Authorization: `Basic ${lcu_session_token}`,
-    }
-
-    const get_current_summoner = `${lcu_api}/lol-summoner/v1/current-summoner`
-
-    try {
-        const response = await httpsRequest(
-            get_current_summoner,
-            'GET',
-            lcu_headers
-        )
-        const summonerInfo = JSON.parse(response)
-        return {
-            gameName: summonerInfo.gameName,
-            tagLine: summonerInfo.tagLine,
-        }
-    } catch (error) {
-        console.error('Error fetching current summoner:', error)
-        throw error
-    }
-}
+// export async function getCurrentSummoner(
+//     LCUArguments: LCUArguments
+// ): Promise<{ gameName: string; tagLine: string }> {
+//     const lcu_api = `https://127.0.0.1:${LCUArguments.app_port}`
+//     const lcu_session_token = Buffer.from(
+//         `riot:${LCUArguments.auth_token}`
+//     ).toString('base64')
+//
+//     const lcu_headers = {
+//         'Content-Type': 'application/json',
+//         Accept: 'application/json',
+//         Authorization: `Basic ${lcu_session_token}`,
+//     }
+//
+//     const get_current_summoner = `${lcu_api}/lol-summoner/v1/current-summoner`
+//
+//     try {
+//         const response = await httpsRequest(
+//             get_current_summoner,
+//             'GET',
+//             lcu_headers
+//         )
+//         const summonerInfo = JSON.parse(response)
+//         return {
+//             gameName: summonerInfo.gameName,
+//             tagLine: summonerInfo.tagLine,
+//         }
+//     } catch (error) {
+//         console.error('Error fetching current summoner:', error)
+//         throw error
+//     }
+// }
 
 export async function checkForLobby(LCUArguments: LCUArguments) {
     const lcu_api = `https://127.0.0.1:${LCUArguments.app_port}`
@@ -95,12 +95,19 @@ export async function checkForLobby(LCUArguments: LCUArguments) {
 
     try {
         const getChampSelect = `${lcu_api}/lol-champ-select/v1/session`
+        const getGameMode = `${lcu_api}/lol-lobby/v1/parties/gamemode`
         const champSelectResponseText = await httpsRequest(
             getChampSelect,
             'GET',
             lcu_headers
         )
+        const champGameModeResponseText = await httpsRequest(
+            getGameMode,
+            'GET',
+            lcu_headers
+        )
         const champSelectResponse = JSON.parse(champSelectResponseText)
+        console.log(champGameModeResponseText)
 
         if ('errorCode' in champSelectResponse) {
             console.log('Not in champ select.')
