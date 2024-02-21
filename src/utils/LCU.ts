@@ -2,60 +2,54 @@ import os from "os";
 import find from "find-process";
 import ps from "ps-node";
 import { LCUArguments } from "../types";
-// import ffi from "ffi-napi";
-import Struct from "ref-struct-napi";
+import koffi from "koffi";
 
-const Rect = Struct({
+const RECT = koffi.struct("Rect", {
   left: "long",
   top: "long",
   right: "long",
   bottom: "long",
 });
+const user32 = koffi.load("user32.dll");
 
-// const user32 = ffi.Library("user32", {
-//   FindWindowA: ["long", ["string", "string"]],
-//   GetWindowRect: ["bool", ["long", "pointer"]],
-//   GetForegroundWindow: ["long", []],
-// });
-// export async function getLCUWindowPositionAndSize(): Promise<{
-//   x: number;
-//   y: number;
-//   width: number;
-//   height: number;
-//   isForeground: boolean;
-// }> {
-//   return new Promise((resolve, reject) => {
-//     const lcuWindowName = "League of Legends";
-//     const hwnd = user32.FindWindowA(null, lcuWindowName);
-//
-//     if (!hwnd) {
-//       reject(new Error("LCU window not found"));
-//       return;
-//     }
-//
-//     const rect = new Rect();
-//     const rectPtr = rect.ref();
-//
-//     const success = user32.GetWindowRect(hwnd, rectPtr);
-//     if (!success) {
-//       reject(new Error("Failed to get window position and size"));
-//       return;
-//     }
-//
-//     const foregroundHwnd = user32.GetForegroundWindow();
-//     const isForeground = hwnd === foregroundHwnd;
-//
-//     const positionAndSize = {
-//       x: rect.left,
-//       y: rect.top,
-//       width: rect.right - rect.left,
-//       height: rect.bottom - rect.top,
-//       isForeground,
-//     };
-//
-//     resolve(positionAndSize);
-//   });
-// }
+const FindWindowA = user32.func("FindWindowA", "int", ["str", "str"]);
+const GetWindowRect = user32.func("GetWindowRect", "bool", ["int", "RECT"]);
+const GetForegroundWindow = user32.func("GetForegroundWindow", "int", []);
+
+interface IRect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+export async function getLCUWindowPositionAndSize(): Promise<
+  IRect & { isForeground: boolean }
+> {
+  return new Promise((resolve, reject) => {
+    const lcuWindowName = "League of Legends";
+    const hwnd = FindWindowA(null, lcuWindowName);
+
+    if (!hwnd) {
+      reject(new Error("LCU window not found"));
+      return;
+    }
+
+    let rect: Partial<IRect> = {};
+    if (!GetWindowRect(hwnd, rect)) {
+      reject(new Error("Failed to get window position and size"));
+      return;
+    }
+
+    const foregroundHwnd = GetForegroundWindow();
+    const isForeground = hwnd === foregroundHwnd;
+
+    resolve({
+      ...(rect as IRect),
+      isForeground,
+    });
+  });
+}
 
 export function getLCUName(): string {
   let lcu_name: string;
