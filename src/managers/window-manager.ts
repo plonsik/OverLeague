@@ -32,6 +32,7 @@ export const createWindow = async () => {
 
         await overlayWindow.loadFile('renderer/overlay.html')
         overlayWindow.once('ready-to-show', () => overlayWindow?.show())
+        // @ts-ignore
         overlayWindow.on('closed', () => (overlayWindow = null))
         overlayWindow.on('close', (event) => {
             event.preventDefault()

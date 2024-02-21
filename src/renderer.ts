@@ -1,3 +1,5 @@
+import './app'
+
 interface Participant {
     game_name: string
     game_tag: string
