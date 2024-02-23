@@ -8,16 +8,15 @@ export const startLobbyStatusChecks = (
   overlayWindow: BrowserWindow | null = null,
 ) => {
   const worker = new Worker(path.join(__dirname, "./lobby-status-worker.js"));
-  worker.on("message", (message: any) => {
-    if (message.success && overlayWindow) {
-      console.log(message.lobbyData);
-      overlayWindow.webContents.send("lobby-status", message.lobbyData);
-
-      if (message.lobbyData !== null && !overlayWindow.isVisible()) {
-        overlayWindow.show();
-      }
-    }
-  });
+  // worker.on("message", (message: any) => {
+  //   if (message.success && overlayWindow) {
+  //     overlayWindow.webContents.send("lobby-status", message.lobbyData);
+  //
+  //     if (message.lobbyData !== null && !overlayWindow.isVisible()) {
+  //       overlayWindow.show();
+  //     }
+  //   }
+  // });
 
   worker.on("error", (error: Error) => {
     console.error("Worker error:", error);
