@@ -34,9 +34,20 @@ export interface Participant {
 
 export type CallbackFunction = (...args: any[]) => void;
 
-// Register the router instance for type safety
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
+}
+
+declare module "*.png";
+declare module "*.svg";
+declare module "*.jpeg";
+declare module "*.jpg";
+
+export interface IRect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
 }

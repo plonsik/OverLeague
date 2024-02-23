@@ -25,6 +25,7 @@ export default defineConfig((env) => {
       },
     },
     plugins: [pluginHotRestart("restart"), TanStackRouterVite()],
+    base: "./",
     define,
     resolve: {
       // Load the Node.js entry.

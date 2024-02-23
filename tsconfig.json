@@ -12,5 +12,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "react-jsx"
-  }
+  },
+  "include": [
+    "src/**/*",
+    "src/types.d.ts",
+    "forge.env.d.ts"
+  ]
 }

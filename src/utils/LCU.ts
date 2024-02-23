@@ -1,27 +1,23 @@
 import os from "os";
 import find from "find-process";
-import ps from "ps-node";
-import { LCUArguments } from "../types";
+import { IRect, LCUArguments } from "../types";
 import koffi from "koffi";
 
-const RECT = koffi.struct("Rect", {
+export const Rect = koffi.struct("Rect", {
   left: "long",
   top: "long",
   right: "long",
   bottom: "long",
 });
+export const LPRect = koffi.pointer("LPRect", Rect);
 const user32 = koffi.load("user32.dll");
 
 const FindWindowA = user32.func("FindWindowA", "int", ["str", "str"]);
-const GetWindowRect = user32.func("GetWindowRect", "bool", ["int", "RECT"]);
+const GetWindowRect = user32.func("GetWindowRect", "bool", [
+  "int",
+  koffi.out(LPRect),
+]);
 const GetForegroundWindow = user32.func("GetForegroundWindow", "int", []);
-
-interface IRect {
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-}
 
 export async function getLCUWindowPositionAndSize(): Promise<
   IRect & { isForeground: boolean }
@@ -35,12 +31,12 @@ export async function getLCUWindowPositionAndSize(): Promise<
       return;
     }
 
-    let rect: Partial<IRect> = {};
+    let rect = {};
+
     if (!GetWindowRect(hwnd, rect)) {
       reject(new Error("Failed to get window position and size"));
       return;
     }
-
     const foregroundHwnd = GetForegroundWindow();
     const isForeground = hwnd === foregroundHwnd;
 
@@ -67,6 +63,7 @@ export function getLCUName(): string {
   return lcu_name;
 }
 
+//TODO: get process from here to func below
 export async function isLCUAvailable(lcu_name: string): Promise<boolean> {
   try {
     const list = await find("name", lcu_name);
@@ -84,44 +81,30 @@ export async function getLCUArguments(lcu_name: string): Promise<LCUArguments> {
     throw new Error(`No ${lcu_name} found. Login to an account and try again.`);
   }
 
-  const pid = processes[0].pid;
+  const command = processes[0].cmd;
+  const args = command.split(" ");
 
-  return new Promise((resolve, reject) => {
-    ps.lookup({ pid: pid }, (err, resultList) => {
-      if (err) {
-        reject(err);
-        return;
-      }
+  const lcuArguments: LCUArguments = {};
 
-      const process = resultList[0];
-      if (process) {
-        const args = process.arguments;
-        const lcuArguments: LCUArguments = {};
-
-        args.forEach((arg) => {
-          if (arg.includes("--region=")) {
-            lcuArguments.region = arg.split("--region=", 2)[1].toLowerCase();
-          } else if (arg.includes("--remoting-auth-token=")) {
-            lcuArguments.auth_token = arg.split("--remoting-auth-token=", 2)[1];
-          } else if (arg.includes("--app-port=")) {
-            lcuArguments.app_port = arg.split("--app-port=", 2)[1];
-          } else if (arg.includes("--riotclient-auth-token=")) {
-            lcuArguments.riotclient_auth_token = arg.split(
-              "--riotclient-auth-token=",
-              2,
-            )[1];
-          } else if (arg.includes("--riotclient-app-port=")) {
-            lcuArguments.riotclient_app_port = arg.split(
-              "--riotclient-app-port=",
-              2,
-            )[1];
-          }
-        });
-
-        resolve(lcuArguments);
-      } else {
-        reject(new Error("LCU process not found"));
-      }
-    });
+  args.forEach((arg) => {
+    if (arg.includes("--region=")) {
+      lcuArguments.region = arg.split("--region=", 2)[1].toLowerCase();
+    } else if (arg.includes("--remoting-auth-token=")) {
+      lcuArguments.auth_token = arg.split("--remoting-auth-token=", 2)[1];
+    } else if (arg.includes("--app-port=")) {
+      lcuArguments.app_port = arg.split("--app-port=", 2)[1];
+    } else if (arg.includes("--riotclient-auth-token=")) {
+      lcuArguments.riotclient_auth_token = arg.split(
+        "--riotclient-auth-token=",
+        2,
+      )[1];
+    } else if (arg.includes("--riotclient-app-port=")) {
+      lcuArguments.riotclient_app_port = arg.split(
+        "--riotclient-app-port=",
+        2,
+      )[1];
+    }
   });
+
+  return lcuArguments;
 }
