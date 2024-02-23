@@ -1,13 +1,13 @@
 import { Worker } from "worker_threads";
 import { LCUArguments } from "../types";
 import { BrowserWindow } from "electron";
+import path from "path";
 
 export const startLobbyStatusChecks = (
   LCUArguments: LCUArguments,
   overlayWindow: BrowserWindow | null = null,
 ) => {
-  const worker = new Worker("./src/workers/lobby-status-worker.ts");
-
+  const worker = new Worker(path.join(__dirname, "./lobby-status-worker.js"));
   worker.on("message", (message: any) => {
     if (message.success && overlayWindow) {
       console.log(message.lobbyData);

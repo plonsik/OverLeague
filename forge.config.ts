@@ -32,6 +32,10 @@ const config: ForgeConfig = {
           entry: "src/utils/preload.ts",
           config: "vite.preload.config.ts",
         },
+        {
+          entry: "src/workers/lobby-status-worker.ts",
+          config: "vite.worker.config.ts",
+        },
       ],
       renderer: [
         {

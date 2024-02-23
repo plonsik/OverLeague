@@ -82,29 +82,37 @@ export async function getLCUArguments(lcu_name: string): Promise<LCUArguments> {
   }
 
   const command = processes[0].cmd;
-  const args = command.split(" ");
+  const argsRegex = /"[^"]+"|\S+/g;
+  const args = command.match(argsRegex);
 
   const lcuArguments: LCUArguments = {};
 
-  args.forEach((arg) => {
-    if (arg.includes("--region=")) {
-      lcuArguments.region = arg.split("--region=", 2)[1].toLowerCase();
-    } else if (arg.includes("--remoting-auth-token=")) {
-      lcuArguments.auth_token = arg.split("--remoting-auth-token=", 2)[1];
-    } else if (arg.includes("--app-port=")) {
-      lcuArguments.app_port = arg.split("--app-port=", 2)[1];
-    } else if (arg.includes("--riotclient-auth-token=")) {
-      lcuArguments.riotclient_auth_token = arg.split(
-        "--riotclient-auth-token=",
-        2,
-      )[1];
-    } else if (arg.includes("--riotclient-app-port=")) {
-      lcuArguments.riotclient_app_port = arg.split(
-        "--riotclient-app-port=",
-        2,
-      )[1];
-    }
-  });
+  if (args) {
+    args.forEach((arg) => {
+      const cleanedArg = arg.replace(/^"|"$/g, "");
+
+      if (cleanedArg.includes("--region=")) {
+        lcuArguments.region = cleanedArg.split("--region=", 2)[1].toLowerCase();
+      } else if (cleanedArg.includes("--remoting-auth-token=")) {
+        lcuArguments.auth_token = cleanedArg.split(
+          "--remoting-auth-token=",
+          2,
+        )[1];
+      } else if (cleanedArg.includes("--app-port=")) {
+        lcuArguments.app_port = cleanedArg.split("--app-port=", 2)[1];
+      } else if (cleanedArg.includes("--riotclient-auth-token=")) {
+        lcuArguments.riotclient_auth_token = cleanedArg.split(
+          "--riotclient-auth-token=",
+          2,
+        )[1];
+      } else if (cleanedArg.includes("--riotclient-app-port=")) {
+        lcuArguments.riotclient_app_port = cleanedArg.split(
+          "--riotclient-app-port=",
+          2,
+        )[1];
+      }
+    });
+  }
 
   return lcuArguments;
 }
