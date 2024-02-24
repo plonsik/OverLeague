@@ -1,14 +1,31 @@
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { Participant } from "../../types";
 
 const Index = () => {
   const navigate = useNavigate({ from: "/" });
 
   useEffect(() => {
-    setTimeout(() => {
-      navigate({ to: "lobby-view" });
-    }, 5000);
-  }, []);
+    let listenerFunc: { (): void; (): void };
+    const handleLobbyStatus = (
+      lobbyData: { participants: Participant[] } | null
+    ) => {
+      console.log(lobbyData);
+      if (lobbyData !== null) {
+        navigate({ to: "lobby-view" });
+      }
+    };
+    listenerFunc = window.electronAPI.receive(
+      "lobby-status",
+      handleLobbyStatus
+    );
+
+    return () => {
+      if (listenerFunc) {
+        window.electronAPI.removeListener("lobby-status", listenerFunc);
+      }
+    };
+  }, [navigate]);
 
   return (
     <div

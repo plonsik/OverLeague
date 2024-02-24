@@ -25,15 +25,19 @@ const config: ForgeConfig = {
       build: [
         {
           // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
-          entry: "src/main.ts",
+          entry: "src/electron/main.ts",
           config: "vite.main.config.ts",
         },
         {
-          entry: "src/utils/preload.ts",
+          entry: "src/electron/preload.ts",
           config: "vite.preload.config.ts",
         },
         {
-          entry: "src/workers/lobby-status-worker.ts",
+          entry: "src/electron/workers/lobby-status-worker.ts",
+          config: "vite.worker.config.ts",
+        },
+        {
+          entry: "src/electron/workers/player-data-worker.ts",
           config: "vite.worker.config.ts",
         },
       ],

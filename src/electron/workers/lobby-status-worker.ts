@@ -4,7 +4,8 @@ import {
   getGameMode,
   getLobbyParticipants,
 } from "../utils/requests";
-import { LCUArguments } from "../types";
+import { LCUArguments, Participant } from "../../types";
+import { getQueueDescription } from "../utils/queue-info";
 
 if (parentPort) {
   parentPort.on("message", async (LCUArguments: LCUArguments) => {
@@ -16,16 +17,29 @@ if (parentPort) {
       }
 
       const gameMode = await getGameMode(LCUArguments);
+      const queueDescription = await getQueueDescription(gameMode);
       const lobbyParticipants = await getLobbyParticipants(LCUArguments);
 
-      parentPort.postMessage({
-        success: true,
-        data: {
-          champSelectSession,
-          gameMode,
-          lobbyParticipants,
-        },
-      });
+      if (lobbyParticipants.length === 5) {
+        const participantsData = lobbyParticipants.map(
+          (participant: Participant) => {
+            return [
+              participant.game_name,
+              participant.game_tag,
+              participant.region,
+              participant.name,
+            ];
+          },
+        );
+
+        parentPort.postMessage({
+          success: true,
+          data: {
+            queueDescription,
+            participantsData,
+          },
+        });
+      }
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "An unknown error occurred";

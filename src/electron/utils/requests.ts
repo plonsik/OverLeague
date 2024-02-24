@@ -1,5 +1,5 @@
 import https from "https";
-import { LCUArguments, Participant } from "../types";
+import { LCUArguments, Participant } from "../../types";
 
 const CONTENT_TYPE_JSON = "application/json";
 const LCU_BASE_URL = "https://127.0.0.1";
@@ -10,7 +10,7 @@ function getAuthorizationToken(authToken: string): string {
 
 function createHeaders(authToken: string): Record<string, string> {
   return {
-    "Content-Type": CONTENT_TYPE_JSON,
+    "Content-Type": `${CONTENT_TYPE_JSON}; charset=utf-8`,
     Accept: CONTENT_TYPE_JSON,
     Authorization: getAuthorizationToken(authToken),
   };
@@ -64,7 +64,7 @@ export async function getGameMode(LCUArguments: LCUArguments): Promise<number> {
     if (gameMode && gameMode.queueId != null) {
       return gameMode.queueId;
     } else {
-      console.log("Queue ID not found in the game mode data.");
+      return null;
     }
   } catch (error) {
     console.error("Error getting game mode:", error);

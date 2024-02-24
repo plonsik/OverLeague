@@ -30,17 +30,29 @@ export interface IRect {
   bottom: number;
 }
 
+export interface Queue {
+  queueId: number;
+  description: string | null;
+}
+
+export interface LobbyStatusData {
+  queueDescription: string;
+  participantNames: string[];
+}
+
 export type CallbackFunction = (...args: any[]) => void;
 
 export interface IElectronAPI {
   loadPreferences: () => Promise<void>;
 
-  receive(
-    lobbyStatus: string,
-    param2: (lobbyData: { participants: Participant[] } | null) => void,
-  ): void;
+  receive: (
+    channel: string,
+    callback: (lobbyData: { participants: Participant[] } | null) => void,
+  ) => () => void;
 
-  openLink(opggMultiLink: string): void;
+  removeListener: (channel: string, callback: () => void) => void;
+
+  openLink: (url: string) => void;
 
   quitTeamBuilderDraft: () => Promise<any>;
 

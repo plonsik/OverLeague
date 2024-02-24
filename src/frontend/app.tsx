@@ -1,9 +1,11 @@
-import "./index.css";
+import "./styles/fonts.css";
+import "./styles/tailwind.css";
+
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 
-import { routeTree } from "./routeTree.gen";
+import { routeTree } from "./route-types.gen";
 
 const router = createRouter({ routeTree });
 
@@ -14,7 +16,7 @@ if (container !== null) {
   root.render(
     <StrictMode>
       <RouterProvider router={router} />
-    </StrictMode>,
+    </StrictMode>
   );
 } else {
   console.error("Failed to find the root container");

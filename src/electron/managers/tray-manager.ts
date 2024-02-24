@@ -1,6 +1,6 @@
 import { app, Menu, Tray, nativeImage } from "electron";
 import { hideWindow, showWindow } from "./window-manager";
-import trayIcon from "../assets/logo.png";
+import trayIcon from "../../assets/images/logo.png";
 import {
   disableAutoLaunch,
   enableAutoLaunch,

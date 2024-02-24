@@ -1,4 +1,4 @@
-import "./app";
+import "../frontend/app";
 // interface Participant {
 //   game_name: string;
 //   game_tag: string;
@@ -97,9 +97,3 @@ import "./app";
 //         const uggMultiLink = createUGGMultiSearchLink(uniqueKeys)
 //         window.electronAPI.openLink(uggMultiLink)
 //     })
-// window.electronAPI.receive(
-//   "lobby-status",
-//   (lobbyData: { participants: Participant[] } | null) => {
-//     updateLobby(lobbyData);
-//   },
-// );

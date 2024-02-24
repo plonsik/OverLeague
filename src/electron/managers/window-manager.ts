@@ -7,10 +7,9 @@ import {
 import { BrowserWindow } from "electron";
 import path from "path";
 import { startLobbyStatusChecks } from "./worker-manager";
-import { IRect, LCUArguments } from "../types";
+import { IRect, LCUArguments } from "../../types";
 
 let overlayWindow: BrowserWindow | null = null;
-
 const loadReactApp = (browserWindow: BrowserWindow) => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     browserWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
@@ -38,6 +37,7 @@ const createOverlayWindow = (lcuArguments: LCUArguments) => {
     frame: false,
     show: true,
     skipTaskbar: true,
+    resizable: false,
     webPreferences: {
       preload: path.join(__dirname, "./preload.js"),
       nodeIntegration: false,

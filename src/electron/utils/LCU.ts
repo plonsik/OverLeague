@@ -1,6 +1,6 @@
 import os from "os";
 import find from "find-process";
-import { IRect, LCUArguments } from "../types";
+import { IRect, LCUArguments } from "../../types";
 import koffi from "koffi";
 
 export const Rect = koffi.struct("Rect", {
@@ -20,6 +20,7 @@ const GetWindowRect = user32.func("GetWindowRect", "bool", [
 ]);
 const GetForegroundWindow = user32.func("GetForegroundWindow", "int", []);
 
+//TODO: Get handle not from window name xdd
 export async function getLCUWindowPositionAndSize(): Promise<
   IRect & { isForeground: boolean }
 > {
