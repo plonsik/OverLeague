@@ -3,7 +3,7 @@ import {
   getChampSelectSession,
   getGameMode,
   getLobbyParticipants,
-} from "../utils/requests"; // Adjust the import path as necessary
+} from "../utils/requests";
 import { LCUArguments } from "../types";
 
 if (parentPort) {
@@ -11,14 +11,12 @@ if (parentPort) {
     try {
       const champSelectSession = await getChampSelectSession(LCUArguments);
       if (!champSelectSession || champSelectSession.errorCode) {
-        console.log("Not in Champion Select.");
+        parentPort.postMessage({ champSelectEnded: true });
         return;
       }
 
       const gameMode = await getGameMode(LCUArguments);
-      console.log(gameMode);
       const lobbyParticipants = await getLobbyParticipants(LCUArguments);
-      console.log(lobbyParticipants);
 
       parentPort.postMessage({
         success: true,

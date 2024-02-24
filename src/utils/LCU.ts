@@ -9,6 +9,7 @@ export const Rect = koffi.struct("Rect", {
   right: "long",
   bottom: "long",
 });
+
 export const LPRect = koffi.pointer("LPRect", Rect);
 const user32 = koffi.load("user32.dll");
 
@@ -63,7 +64,6 @@ export function getLCUName(): string {
   return lcu_name;
 }
 
-//TODO: get process from here to func below
 export async function isLCUAvailable(lcu_name: string): Promise<boolean> {
   try {
     const list = await find("name", lcu_name);

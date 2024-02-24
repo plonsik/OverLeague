@@ -7,10 +7,15 @@ import { routeTree } from "./routeTree.gen";
 
 const router = createRouter({ routeTree });
 
-const root = ReactDOM.createRoot(document.body);
+const container = document.getElementById("main");
 
-root.render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-);
+if (container !== null) {
+  const root = ReactDOM.createRoot(container);
+  root.render(
+    <StrictMode>
+      <RouterProvider router={router} />
+    </StrictMode>,
+  );
+} else {
+  console.error("Failed to find the root container");
+}

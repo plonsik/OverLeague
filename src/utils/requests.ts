@@ -1,5 +1,5 @@
 import https from "https";
-import { LCUArguments } from "../types";
+import { LCUArguments, Participant } from "../types";
 
 const CONTENT_TYPE_JSON = "application/json";
 const LCU_BASE_URL = "https://127.0.0.1";
@@ -51,20 +51,23 @@ export async function getChampSelectSession(LCUArguments: LCUArguments) {
     return JSON.parse(responseText);
   } catch (error) {
     console.error("Error getting champion select session:", error);
-    throw error;
   }
 }
 
-export async function getGameMode(LCUArguments: LCUArguments) {
+export async function getGameMode(LCUArguments: LCUArguments): Promise<number> {
   const url = `${LCU_BASE_URL}:${LCUArguments.app_port}/lol-lobby/v1/parties/gamemode`;
   const headers = createHeaders(LCUArguments.auth_token);
 
   try {
     const responseText = await httpsRequest(url, "GET", headers);
-    return JSON.parse(responseText);
+    const gameMode = JSON.parse(responseText);
+    if (gameMode && gameMode.queueId != null) {
+      return gameMode.queueId;
+    } else {
+      console.log("Queue ID not found in the game mode data.");
+    }
   } catch (error) {
     console.error("Error getting game mode:", error);
-    throw error;
   }
 }
 
@@ -74,10 +77,13 @@ export async function getLobbyParticipants(LCUArguments: LCUArguments) {
 
   try {
     const responseText = await httpsRequest(url, "GET", headers);
-    return JSON.parse(responseText);
+    const participantsData = JSON.parse(responseText);
+
+    return participantsData.participants.filter((participant: Participant) =>
+      participant.cid.includes("lol-champ-select"),
+    );
   } catch (error) {
     console.error("Error getting lobby participants:", error);
-    throw error;
   }
 }
 

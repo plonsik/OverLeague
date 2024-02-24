@@ -10,7 +10,6 @@ import { startLobbyStatusChecks } from "./worker-manager";
 import { IRect, LCUArguments } from "../types";
 
 let overlayWindow: BrowserWindow | null = null;
-let LCUArguments: LCUArguments | null = null;
 
 const loadReactApp = (browserWindow: BrowserWindow) => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
@@ -22,41 +21,46 @@ const loadReactApp = (browserWindow: BrowserWindow) => {
   }
 };
 
-export const createWindow = async () => {
+export const checkAvailabilityAndCreateWindow = async () => {
   const lcu_name = getLCUName();
   const isAvailable = await isLCUAvailable(lcu_name);
 
   if (isAvailable && !overlayWindow) {
-    LCUArguments = await getLCUArguments(lcu_name);
-    overlayWindow = new BrowserWindow({
-      width: 230,
-      height: 720,
-      frame: false,
-      show: true,
-      skipTaskbar: true,
-      webPreferences: {
-        preload: path.join(__dirname, "../utils/preload.js"),
-        nodeIntegration: false,
-        contextIsolation: true,
-      },
-    });
-
-    loadReactApp(overlayWindow);
-    overlayWindow.on("closed", (): void => (overlayWindow = null));
-    overlayWindow.on("close", (event) => {
-      event.preventDefault();
-      overlayWindow!.hide();
-    });
-    overlayWindow.webContents.toggleDevTools();
-    startUpdatingWindowPosition();
-
-    startLobbyStatusChecks(LCUArguments, overlayWindow);
+    const lcuArguments = await getLCUArguments(lcu_name);
+    createOverlayWindow(lcuArguments);
   }
 };
-//TODO: Throttle this shit a bit or make performance mode
+
+const createOverlayWindow = (lcuArguments: LCUArguments) => {
+  overlayWindow = new BrowserWindow({
+    width: 230,
+    height: 720,
+    frame: false,
+    show: true,
+    skipTaskbar: true,
+    webPreferences: {
+      preload: path.join(__dirname, "./preload.js"),
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
+  });
+
+  loadReactApp(overlayWindow);
+  overlayWindow.on("closed", (): void => (overlayWindow = null));
+  overlayWindow.webContents.toggleDevTools();
+  startUpdatingWindowPosition();
+  startLobbyStatusChecks(lcuArguments, overlayWindow);
+};
+
 const startUpdatingWindowPosition = () => {
+  let intervalId: string | number | NodeJS.Timeout = null;
+
   const updatePosition = async () => {
     if (!overlayWindow) {
+      if (intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
       return;
     }
 
@@ -79,18 +83,20 @@ const startUpdatingWindowPosition = () => {
         "Error fetching LCU position and size:",
         error instanceof Error ? error.message : String(error),
       );
-      overlayWindow.destroy();
-      overlayWindow = null;
+      if (overlayWindow) {
+        overlayWindow.destroy();
+        overlayWindow = null;
+      }
+      if (intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
     }
-
-    setImmediate(updatePosition);
   };
-  setImmediate(updatePosition);
+
+  intervalId = setInterval(updatePosition, 1000 / 120);
 };
 
-export const getWindow = () => {
-  return overlayWindow;
-};
 export const showWindow = () => {
   if (overlayWindow) {
     overlayWindow.show();
@@ -101,8 +107,4 @@ export const hideWindow = () => {
   if (overlayWindow) {
     overlayWindow.hide();
   }
-};
-
-export const retrieveLCUArguments = () => {
-  return LCUArguments;
 };

@@ -1,6 +1,4 @@
 import { ipcMain, shell } from "electron";
-import { retrieveLCUArguments } from "./window-manager";
-import { quitTeamBuilderDraft } from "../utils/requests";
 
 export function setupIpcHandlers() {
   ipcMain.handle("openLink", async (_, url) => {
