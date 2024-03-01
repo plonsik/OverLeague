@@ -71,6 +71,28 @@ export async function getGameMode(LCUArguments: LCUArguments): Promise<number> {
   }
 }
 
+export async function getRegion(
+  LCUArguments: LCUArguments,
+): Promise<{ region: string; webRegion: string }> {
+  const url = `${LCU_BASE_URL}:${LCUArguments.app_port}/riotclient/region-locale`;
+  const headers = createHeaders(LCUArguments.auth_token);
+
+  try {
+    const responseText = await httpsRequest(url, "GET", headers);
+    const regionLocale = JSON.parse(responseText);
+    if (regionLocale && regionLocale.region && regionLocale.webRegion) {
+      return {
+        region: regionLocale.region,
+        webRegion: regionLocale.webRegion,
+      };
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting game mode:", error);
+  }
+}
+
 export async function getLobbyParticipants(LCUArguments: LCUArguments) {
   const url = `${LCU_BASE_URL}:${LCUArguments.riotclient_app_port}/chat/v5/participants`;
   const headers = createHeaders(LCUArguments.riotclient_auth_token);

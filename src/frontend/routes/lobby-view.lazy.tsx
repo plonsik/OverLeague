@@ -1,10 +1,10 @@
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
-import Opgg from "../assets/images/opgg.png";
+import Opgg from "../../assets/images/opgg.png";
 import { useEffect } from "react";
 import { Player } from "../components/lobby-view/Player";
 
 const LobbyView = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: "lobby-view" });
 
   useEffect(() => {
     let listenerFunc: { (): void; (): void };
@@ -12,19 +12,13 @@ const LobbyView = () => {
       if (lobbyData === null) {
         navigate({ to: "/" });
       }
-    };
 
-    listenerFunc = window.electronAPI.receive(
-      "lobby-status",
-      handleLobbyStatus
-    );
-
-    return () => {
-      if (listenerFunc) {
-        window.electronAPI.removeListener("lobby-status", listenerFunc);
-      }
+      listenerFunc = window.electronAPI.receive(
+        "lobby-status",
+        handleLobbyStatus,
+      );
     };
-  }, [navigate]);
+  });
 
   return (
     <div className="h-full flex flex-col">
@@ -33,11 +27,36 @@ const LobbyView = () => {
       </div>
       <div className="h-[95%] gap-16 flex flex-col justify-between">
         <div className="h-[85%] mx-3.5">
-          <Player nickname={"PlayerOne"} rank={"Gold"} winRatio={"52%"} kda={"2.5"} />
-          <Player nickname={"PlayerTwo"} rank={"Silver"} winRatio={"47%"} kda={"1.8"} />
-          <Player nickname={"PlayerThree"} rank={"Platinum"} winRatio={"60%"} kda={"3.1"} />
-          <Player nickname={"PlayerFour"} rank={"Bronze"} winRatio={"40%"} kda={"1.2"} />
-          <Player nickname={"PlayerFive"} rank={"Diamond"} winRatio={"65%"} kda={"3.8"} />
+          <Player
+            nickname={"PlayerOne"}
+            rank={"Gold"}
+            winRatio={"52%"}
+            kda={"2.5"}
+          />
+          <Player
+            nickname={"PlayerTwo"}
+            rank={"Silver"}
+            winRatio={"47%"}
+            kda={"1.8"}
+          />
+          <Player
+            nickname={"PlayerThree"}
+            rank={"Platinum"}
+            winRatio={"60%"}
+            kda={"3.1"}
+          />
+          <Player
+            nickname={"PlayerFour"}
+            rank={"Bronze"}
+            winRatio={"40%"}
+            kda={"1.2"}
+          />
+          <Player
+            nickname={"PlayerFive"}
+            rank={"Diamond"}
+            winRatio={"65%"}
+            kda={"3.8"}
+          />
         </div>
 
         <div className="h-[15%] flex flex-row items-center justify-center">

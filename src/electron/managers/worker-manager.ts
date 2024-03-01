@@ -27,7 +27,7 @@ export const startLobbyStatusChecks = (
         isInChampSelect = true;
         console.log(message.data);
 
-        startPlayerDataWorker(overlayWindow, message.data);
+        // startPlayerDataWorker(LCUArguments, overlayWindow, message.data);
       }
     },
   );
@@ -48,6 +48,7 @@ export const startLobbyStatusChecks = (
 };
 
 const startPlayerDataWorker = (
+  lcuArguments: LCUArguments,
   overlayWindow: BrowserWindow | null,
   data: LobbyStatusData,
 ) => {
@@ -69,5 +70,5 @@ const startPlayerDataWorker = (
     }
   });
 
-  worker.postMessage({ action: "processData", data });
+  worker.postMessage({ action: "processData", lcuArguments, data });
 };

@@ -1,5 +1,7 @@
 import { parentPort } from "worker_threads";
 import axios from "axios";
+import { getRegion } from "../utils/requests";
+import { LCUArguments } from "../../types";
 
 async function fetchPlayerData(playersData: any) {
   return Promise.all(
@@ -21,8 +23,9 @@ async function fetchPlayerData(playersData: any) {
   );
 }
 
-parentPort.on("message", async (playersData) => {
+parentPort.on("message", async (lcuArguments: LCUArguments, playersData) => {
   try {
+    const region = await getRegion(lcuArguments);
     const playersInfo = await fetchPlayerData(playersData);
 
     parentPort.postMessage({ success: true, data: playersInfo });

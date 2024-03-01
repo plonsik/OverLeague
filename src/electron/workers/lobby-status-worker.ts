@@ -8,6 +8,8 @@ import { LCUArguments, Participant } from "../../types";
 import { getQueueDescription } from "../utils/queue-info";
 
 if (parentPort) {
+  let processedParticipants = new Set();
+
   parentPort.on("message", async (LCUArguments: LCUArguments) => {
     try {
       const champSelectSession = await getChampSelectSession(LCUArguments);
@@ -20,7 +22,16 @@ if (parentPort) {
       const queueDescription = await getQueueDescription(gameMode);
       const lobbyParticipants = await getLobbyParticipants(LCUArguments);
 
-      if (lobbyParticipants.length === 5) {
+      const newParticipants = lobbyParticipants.filter(
+        (participant: Participant) =>
+          !processedParticipants.has(participant.cid),
+      );
+
+      if (newParticipants.length > 0) {
+        newParticipants.forEach((participant: Participant) =>
+          processedParticipants.add(participant.cid),
+        );
+
         const participantsData = lobbyParticipants.map(
           (participant: Participant) => {
             return [
