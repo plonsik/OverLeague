@@ -40,6 +40,13 @@ export interface LobbyStatusData {
   participantNames: string[];
 }
 
+export type ParticipantData = [
+  nickname: string,
+  region: string,
+  accountId: string,
+  summonerName: string,
+];
+
 export type CallbackFunction = (...args: any[]) => void;
 
 export interface IElectronAPI {
@@ -47,7 +54,13 @@ export interface IElectronAPI {
 
   receive: (
     channel: string,
-    callback: (lobbyData: { participants: Participant[] } | null) => void,
+    callback: (
+      event: Electron.IpcRendererEvent,
+      lobbyData: {
+        queueDescription: string | null;
+        participantsData: ParticipantData[];
+      } | null,
+    ) => void,
   ) => () => void;
 
   removeListener: (channel: string, callback: () => void) => void;

@@ -1,30 +1,34 @@
 import "../styles/index.css";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Participant } from "../../types";
+import { ParticipantData } from "../../types";
 
 const Index = () => {
-  const navigate = useNavigate({ from: "/" });
+  const navigate = useNavigate();
 
   useEffect(() => {
-    let listenerFunc: { (): void; (): void };
     const handleLobbyStatus = (
-      lobbyData: { participants: Participant[] } | null,
+      event: Electron.IpcRendererEvent,
+      lobbyData: {
+        queueDescription: string | null;
+        participantsData: ParticipantData[];
+      } | null,
     ) => {
       console.log(lobbyData);
       if (lobbyData !== null) {
-        navigate({ to: "lobby-view" });
+        // @ts-ignore
+        navigate({ to: "lobby-view", state: { lobbyData } });
+      } else {
       }
     };
-    listenerFunc = window.electronAPI.receive(
+
+    const unsubscribe = window.electronAPI.receive(
       "lobby-status",
       handleLobbyStatus,
     );
 
     return () => {
-      if (listenerFunc) {
-        window.electronAPI.removeListener("lobby-status", listenerFunc);
-      }
+      unsubscribe();
     };
   }, [navigate]);
 

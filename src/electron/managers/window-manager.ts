@@ -1,13 +1,7 @@
-import {
-  getLCUArguments,
-  getLCUName,
-  getLCUWindowPositionAndSize,
-  isLCUAvailable,
-} from "../utils/LCU";
+import { getLCUWindowPositionAndSize } from "../utils/LCU";
 import { BrowserWindow } from "electron";
 import path from "path";
-import { startLobbyStatusChecks } from "./worker-manager";
-import { IRect, LCUArguments } from "../../types";
+import { IRect } from "../../types";
 
 let overlayWindow: BrowserWindow | null = null;
 const loadReactApp = (browserWindow: BrowserWindow) => {
@@ -20,22 +14,12 @@ const loadReactApp = (browserWindow: BrowserWindow) => {
   }
 };
 
-export const checkAvailabilityAndCreateWindow = async () => {
-  const lcu_name = getLCUName();
-  const isAvailable = await isLCUAvailable(lcu_name);
-
-  if (isAvailable && !overlayWindow) {
-    const lcuArguments = await getLCUArguments(lcu_name);
-    createOverlayWindow(lcuArguments);
-  }
-};
-
-const createOverlayWindow = (lcuArguments: LCUArguments) => {
+export const createOverlayWindow = async () => {
   overlayWindow = new BrowserWindow({
     width: 230,
     height: 720,
     frame: false,
-    show: true,
+    show: false,
     skipTaskbar: true,
     resizable: false,
     webPreferences: {
@@ -48,12 +32,10 @@ const createOverlayWindow = (lcuArguments: LCUArguments) => {
   loadReactApp(overlayWindow);
   overlayWindow.on("closed", (): void => (overlayWindow = null));
   overlayWindow.webContents.toggleDevTools();
-  startUpdatingWindowPosition();
-  startLobbyStatusChecks(lcuArguments, overlayWindow);
 };
 
-const startUpdatingWindowPosition = () => {
-  let intervalId: string | number | NodeJS.Timeout = null;
+export const startUpdatingWindowPosition = () => {
+  let intervalId: NodeJS.Timeout | null = null;
 
   const updatePosition = async () => {
     if (!overlayWindow) {
@@ -83,10 +65,6 @@ const startUpdatingWindowPosition = () => {
         "Error fetching LCU position and size:",
         error instanceof Error ? error.message : String(error),
       );
-      if (overlayWindow) {
-        overlayWindow.destroy();
-        overlayWindow = null;
-      }
       if (intervalId !== null) {
         clearInterval(intervalId);
         intervalId = null;
@@ -106,5 +84,11 @@ export const showWindow = () => {
 export const hideWindow = () => {
   if (overlayWindow) {
     overlayWindow.hide();
+  }
+};
+
+export const getOverlayWindow = () => {
+  if (overlayWindow) {
+    return overlayWindow;
   }
 };

@@ -1,15 +1,16 @@
-import { contextBridge, ipcRenderer } from "electron";
-import { CallbackFunction } from "../types";
+import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 
 contextBridge.exposeInMainWorld("electronAPI", {
-  receive: (channel: string, func: CallbackFunction): CallbackFunction => {
-    const wrapper: CallbackFunction = (_, ...args) => func(...args);
-    ipcRenderer.on(channel, wrapper);
+  receive: (
+    channel: string,
+    func: (event: IpcRendererEvent, ...args: any[]) => void,
+  ) => {
+    const handler = (event: IpcRendererEvent, ...args: any[]) =>
+      func(event, ...args);
 
-    return wrapper;
-  },
-  removeListener: (channel: string, func: CallbackFunction): void => {
-    ipcRenderer.removeListener(channel, func);
+    ipcRenderer.on(channel, handler);
+
+    return () => ipcRenderer.removeListener(channel, handler);
   },
   openLink: (url: string) => ipcRenderer.invoke("openLink", url),
   // quitTeamBuilderDraft: () => ipcRenderer.invoke('quitTeamBuilderDraft'),

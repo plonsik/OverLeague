@@ -3,9 +3,11 @@ import {
   getChampSelectSession,
   getGameMode,
   getLobbyParticipants,
+  getRegion,
 } from "../utils/requests";
 import { LCUArguments, Participant } from "../../types";
 import { getQueueDescription } from "../utils/queue-info";
+import { startPlayerDataWorker } from "../managers/worker-manager";
 
 if (parentPort) {
   let processedParticipants = new Set();
@@ -21,6 +23,15 @@ if (parentPort) {
       const gameMode = await getGameMode(LCUArguments);
       const queueDescription = await getQueueDescription(gameMode);
       const lobbyParticipants = await getLobbyParticipants(LCUArguments);
+      const region = await getRegion(LCUArguments);
+      const participantsData = lobbyParticipants.map(
+        (participant: Participant) => [
+          participant.game_name,
+          participant.game_tag,
+          participant.region,
+          participant.name,
+        ],
+      );
 
       const newParticipants = lobbyParticipants.filter(
         (participant: Participant) =>
@@ -32,17 +43,6 @@ if (parentPort) {
           processedParticipants.add(participant.cid),
         );
 
-        const participantsData = lobbyParticipants.map(
-          (participant: Participant) => {
-            return [
-              participant.game_name,
-              participant.game_tag,
-              participant.region,
-              participant.name,
-            ];
-          },
-        );
-
         parentPort.postMessage({
           success: true,
           data: {
@@ -50,11 +50,13 @@ if (parentPort) {
             participantsData,
           },
         });
+
+        newParticipants.forEach((participant: Participant) => {
+          startPlayerDataWorker(participant, region.region);
+        });
       }
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "An unknown error occurred";
-      parentPort.postMessage({ success: false, error: message });
+      console.log(error);
     }
   });
 } else {

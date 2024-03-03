@@ -1,11 +1,11 @@
 import { app, Menu, Tray, nativeImage } from "electron";
-import { hideWindow, showWindow } from "./window-manager";
 import trayIcon from "../../assets/images/logo.png";
 import {
   disableAutoLaunch,
   enableAutoLaunch,
   isAutoLaunchEnabled,
 } from "./auto-launch-manager";
+import { hideWindow, showWindow } from "./window-manager";
 
 let appTray: Tray | null = null;
 export const setupTray = async () => {
@@ -28,12 +28,14 @@ export const setupTray = async () => {
       const contextMenu = Menu.buildFromTemplate([
         { label: "Show", click: showWindow },
         { label: "Hide", click: hideWindow },
+        { type: "separator" },
         {
           label: autoLaunchEnabled
             ? "Disable launch on startup"
             : "Enable launch on startup",
           click: toggleAutoLaunch,
         },
+        { type: "separator" },
         { label: "Exit", click: () => app.quit() },
       ]);
 

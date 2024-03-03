@@ -52,6 +52,7 @@
     "cross-fetch": "^4.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "find-process": "^1.4.7",
+    "framer-motion": "^11.0.8",
     "koffi": "^2.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

@@ -1,9 +1,9 @@
 import { Worker } from "worker_threads";
-import { LCUArguments, LobbyStatusData } from "../../types";
+import { LCUArguments, LobbyStatusData, Participant } from "../../types";
 import { BrowserWindow } from "electron";
 import path from "path";
 
-export const startLobbyStatusChecks = (
+export const startLobbyStatusWorker = (
   LCUArguments: LCUArguments,
   overlayWindow: BrowserWindow | null = null,
 ) => {
@@ -26,8 +26,6 @@ export const startLobbyStatusChecks = (
         overlayWindow.webContents.send("lobby-status", message.data);
         isInChampSelect = true;
         console.log(message.data);
-
-        // startPlayerDataWorker(LCUArguments, overlayWindow, message.data);
       }
     },
   );
@@ -42,33 +40,45 @@ export const startLobbyStatusChecks = (
     }
   });
 
-  setInterval(() => {
+  const intervalId = setInterval(() => {
     worker.postMessage(LCUArguments);
   }, 1000);
+
+  return function stopLobbyStatusWorker() {
+    clearInterval(intervalId);
+    worker.terminate().then((_) => console.log("Lobby status worker stopped."));
+  };
 };
 
-const startPlayerDataWorker = (
-  lcuArguments: LCUArguments,
-  overlayWindow: BrowserWindow | null,
-  data: LobbyStatusData,
+export const startPlayerDataWorker = (
+  participantData: Participant,
+  region: string,
+  overlayWindow: Electron.CrossProcessExports.BrowserWindow | null = null,
 ) => {
   const worker = new Worker(path.join(__dirname, "./player-data-worker.js"));
 
-  worker.on("message", (message: { data: LobbyStatusData }) => {
-    if (overlayWindow) {
-      overlayWindow.webContents.send("player-data", message.data);
+  worker.on("message", (message) => {
+    if (message.success && overlayWindow) {
+      console.log("Player processed", message.data);
+      overlayWindow.webContents.send("player-processed", message.data);
+    } else if (!message.success) {
+      console.error("Error processing player:", message.error);
     }
   });
 
-  worker.on("error", (error: Error) => {
-    console.error("Player Data Worker error:", error);
+  worker.on("error", (error) => {
+    console.error("Player data worker error:", error);
   });
 
-  worker.on("exit", (code: number) => {
+  worker.on("exit", (code) => {
     if (code !== 0) {
-      console.error(`Player Data Worker stopped with exit code ${code}`);
+      console.error(
+        `Player data worker stopped unexpectedly with exit code ${code}`,
+      );
+    } else {
+      console.log("Player data worker completed successfully and exited.");
     }
   });
 
-  worker.postMessage({ action: "processData", lcuArguments, data });
+  worker.postMessage({ participantData, region });
 };

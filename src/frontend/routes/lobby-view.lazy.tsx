@@ -1,74 +1,84 @@
-import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  createLazyFileRoute,
+  useNavigate,
+  useRouterState,
+} from "@tanstack/react-router";
 import Opgg from "../../assets/images/opgg.png";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Player } from "../components/lobby-view/Player";
+import { ParticipantData } from "../../types";
 
 const LobbyView = () => {
   const navigate = useNavigate({ from: "lobby-view" });
 
-  useEffect(() => {
-    let listenerFunc: { (): void; (): void };
-    const handleLobbyStatus = (lobbyData: any) => {
-      if (lobbyData === null) {
-        navigate({ to: "/" });
-      }
-
-      listenerFunc = window.electronAPI.receive(
-        "lobby-status",
-        handleLobbyStatus,
-      );
-    };
+  const routerState = useRouterState({
+    select: (state) => state.location.state?.lobbyData,
   });
 
-  return (
-    <div className="h-full flex flex-col">
-      <div className="h-[5%]">
-        <h2 className="text-xl text-red-600 text-center">Queue Type</h2>
-      </div>
-      <div className="h-[95%] gap-16 flex flex-col justify-between">
-        <div className="h-[85%] mx-3.5">
-          <Player
-            nickname={"PlayerOne"}
-            rank={"Gold"}
-            winRatio={"52%"}
-            kda={"2.5"}
-          />
-          <Player
-            nickname={"PlayerTwo"}
-            rank={"Silver"}
-            winRatio={"47%"}
-            kda={"1.8"}
-          />
-          <Player
-            nickname={"PlayerThree"}
-            rank={"Platinum"}
-            winRatio={"60%"}
-            kda={"3.1"}
-          />
-          <Player
-            nickname={"PlayerFour"}
-            rank={"Bronze"}
-            winRatio={"40%"}
-            kda={"1.2"}
-          />
-          <Player
-            nickname={"PlayerFive"}
-            rank={"Diamond"}
-            winRatio={"65%"}
-            kda={"3.8"}
-          />
-        </div>
+  const [participants, setParticipants] = useState<ParticipantData[]>(
+    routerState?.participantsData || [],
+  );
+  const [queueType, setQueueType] = useState<string>(
+    routerState?.queueDescription || "Custom",
+  );
 
-        <div className="h-[15%] flex flex-row items-center justify-center">
+  useEffect(() => {
+    const handleLobbyStatus = (
+      event: Electron.IpcRendererEvent,
+      lobbyData: {
+        queueDescription: string | null;
+        participantsData: ParticipantData[];
+      } | null,
+    ) => {
+      console.log(lobbyData);
+      if (lobbyData == null) {
+        navigate({ to: "/" });
+      } else {
+        setParticipants(lobbyData.participantsData);
+        setQueueType(lobbyData.queueDescription || "Custom");
+      }
+    };
+
+    const unsubscribe = window.electronAPI.receive(
+      "lobby-status",
+      handleLobbyStatus,
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [navigate]);
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex-none">
+        <h2 className="text-xl text-white text-center my-2 md:text-2xl">
+          {queueType}
+        </h2>
+      </div>
+      <div className="flex-grow flex flex-col justify-evenly gap-4 p-3">
+        <div className="flex-grow space-y-4 overflow-auto">
+          {participants.map((participant, index) => (
+            <Player
+              key={index}
+              nickname={`${participant[0]} #${participant[1]}`}
+              rank="---"
+              winRatio="---"
+              kda="---"
+            />
+          ))}
+        </div>
+        <div className="flex flex-row items-center justify-center gap-8">
           <button
             id="generateOPGGLinksBtn"
-            className="w-17.5 h-17.5 flex justify-center items-center border border-white m-5 cursor-pointer bg-none"
+            className="w-12 h-12 flex justify-center items-center border border-white cursor-pointer bg-transparent hover:bg-gray-200 transition duration-150 ease-in-out"
+            aria-label="Generate OP.GG Links"
           >
-            <img src={Opgg} className="h-16" />
+            <img src={Opgg} alt="OP.GG Icon" className="w-auto h-full" />
           </button>
           <button
             id="dodgeQueueBtn"
-            className="w-17.5 h-17.5 bg-[#d9534f] text-white cursor-pointer font-[Beaufort, serif] text-xl transition-colors duration-300 ease-in-out"
+            className="w-12 h-12 bg-[#d9534f] text-white cursor-pointer font-serif text-md transition-colors duration-300 ease-in-out hover:bg-red-700"
           >
             Dodge
           </button>
