@@ -2,6 +2,7 @@ import { Worker } from "worker_threads";
 import { LCUArguments, LobbyStatusData, Participant } from "../../types";
 import { BrowserWindow } from "electron";
 import path from "path";
+import { fetchPlayerOverallData } from "../utils/player-data-util";
 
 export const startLobbyStatusWorker = (
   LCUArguments: LCUArguments,
@@ -16,6 +17,8 @@ export const startLobbyStatusWorker = (
       champSelectEnded?: boolean;
       success?: boolean;
       data?: LobbyStatusData;
+      participant: Participant;
+      region: any;
     }) => {
       if (message.champSelectEnded && isInChampSelect && overlayWindow) {
         console.log("null");
@@ -26,6 +29,12 @@ export const startLobbyStatusWorker = (
         overlayWindow.webContents.send("lobby-status", message.data);
         isInChampSelect = true;
         console.log(message.data);
+      } else if (message.participant && message.region) {
+        startPlayerDataWorker(
+          message.participant,
+          message.region.region,
+          overlayWindow,
+        );
       }
     },
   );
@@ -59,8 +68,13 @@ export const startPlayerDataWorker = (
 
   worker.on("message", (message) => {
     if (message.success && overlayWindow) {
-      console.log("Player processed", message.data);
-      overlayWindow.webContents.send("player-processed", message.data);
+      fetchPlayerOverallData(message.data).then((extractedStats) => {
+        overlayWindow.webContents.send(
+          "player-processed",
+          extractedStats,
+          participantData,
+        );
+      });
     } else if (!message.success) {
       console.error("Error processing player:", message.error);
     }

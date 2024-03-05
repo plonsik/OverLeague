@@ -80,7 +80,7 @@ export async function getRegion(
   try {
     const responseText = await httpsRequest(url, "GET", headers);
     const regionLocale = JSON.parse(responseText);
-    if (regionLocale && regionLocale.region && regionLocale.webRegion) {
+    if (regionLocale && regionLocale.region) {
       return {
         region: regionLocale.region,
         webRegion: regionLocale.webRegion,

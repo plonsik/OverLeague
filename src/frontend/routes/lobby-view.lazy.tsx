@@ -6,7 +6,7 @@ import {
 import Opgg from "../../assets/images/opgg.png";
 import { useEffect, useState } from "react";
 import { Player } from "../components/lobby-view/Player";
-import { ParticipantData } from "../../types";
+import { Participant, ParticipantData } from "../../types";
 
 const LobbyView = () => {
   const navigate = useNavigate({ from: "lobby-view" });
@@ -39,13 +39,26 @@ const LobbyView = () => {
       }
     };
 
-    const unsubscribe = window.electronAPI.receive(
+    const handlePlayerData = (
+      event: Electron.IpcRendererEvent,
+      extractedStats: any,
+      participantData: Participant,
+    ) => {
+      const participantId = `${participantData.game_name} #${participantData.game_tag}`;
+    };
+
+    const unsubscribeLobby = window.electronAPI.receive(
       "lobby-status",
       handleLobbyStatus,
     );
+    const unsubscribePlayer = window.electronAPI.receive(
+      "player-processed",
+      handlePlayerData,
+    );
 
     return () => {
-      unsubscribe();
+      unsubscribeLobby();
+      unsubscribePlayer();
     };
   }, [navigate]);
 

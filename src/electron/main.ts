@@ -18,7 +18,6 @@ import { startLobbyStatusWorker } from "./managers/worker-manager";
 
 app.on("ready", () => {
   console.log("App is ready");
-  // scrapePlayersData('EUNE', 'Maruaj', 'RANKED_SOLO_5x5')
   setupIpcHandlers();
   setupTray().then((_) => startCheckInterval());
 });

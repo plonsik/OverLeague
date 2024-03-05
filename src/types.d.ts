@@ -56,10 +56,8 @@ export interface IElectronAPI {
     channel: string,
     callback: (
       event: Electron.IpcRendererEvent,
-      lobbyData: {
-        queueDescription: string | null;
-        participantsData: ParticipantData[];
-      } | null,
+      extractedStats: any,
+      participantData: Participant,
     ) => void,
   ) => () => void;
 

@@ -3,7 +3,7 @@ import React from "react";
 type PlayerProps = {
   nickname: string;
   rank: string;
-  winRatio: number | string;
+  winRatio: number;
   kda: string;
 };
 

@@ -52,7 +52,7 @@ if (parentPort) {
         });
 
         newParticipants.forEach((participant: Participant) => {
-          startPlayerDataWorker(participant, region.region);
+          parentPort.postMessage({ participant: participant, region: region });
         });
       }
     } catch (error) {
