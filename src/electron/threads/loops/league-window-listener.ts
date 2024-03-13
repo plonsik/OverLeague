@@ -6,6 +6,8 @@ import {
 import { MAIN_LOOP_INTERVAL } from "../../main";
 import { startOverlayPostionUpdater } from "./overlay-position-updater";
 import { getLCUArguments, getLCUCmd } from "../../utils/lcu";
+import { startLobbyStatusUpdater } from "./lobby-status-updater";
+import { getChampSelectSession, getGameMode } from "../../utils/league-lobby";
 
 export const startLeagueWindowListener = (overlayWindow: BrowserWindow) => {
   let leagueWindowHWND: number | null | undefined;
@@ -32,6 +34,12 @@ export const startLeagueWindowListener = (overlayWindow: BrowserWindow) => {
       leagueWindowHWND,
     });
 
-    console.log(await getLCUArguments(LCUCmd));
+    const LCUArguments = await getLCUArguments(LCUCmd);
+
+    console.log(await getGameMode(LCUArguments));
+
+    // startLobbyStatusUpdater({
+    //   LCUArguments,
+    // });
   }, MAIN_LOOP_INTERVAL);
 };
