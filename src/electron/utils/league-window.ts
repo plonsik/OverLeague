@@ -35,3 +35,4 @@ export const getLeagueWindowDimensions = user32.func("GetWindowRect", "bool", [
   "int",
   koffi.out(leagueWindowDimensionsPointer),
 ]);
+

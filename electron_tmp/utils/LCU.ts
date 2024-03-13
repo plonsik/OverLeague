@@ -65,7 +65,7 @@ export function getLCUName(): string {
   return lcu_name;
 }
 
-export async function isLCUAvailable(lcu_name: string): Promise<boolean> {
+export async function isLCUAvailableCmd(lcu_name: string): Promise<boolean> {
   try {
     const list = await find("name", lcu_name);
     return list.length > 0;

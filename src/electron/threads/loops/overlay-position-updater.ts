@@ -21,8 +21,6 @@ export const startOverlayPostionUpdater = ({
 }: StartOverlayPostionLoopParams) => {
   let updateOverlayPositionIntervalId: StartOverlayPostionLoop = setInterval(
     () => {
-      console.log(JSON.stringify(leagueWindowDimensionsRect));
-
       const isLeagueWindowDimensionsAvailable = getLeagueWindowDimensions(
         leagueWindowHWND,
         leagueWindowDimensionsRect
@@ -50,6 +48,8 @@ export const startOverlayPostionUpdater = ({
           height:
             leagueWindowDimensionsRect.bottom - leagueWindowDimensionsRect.top,
         });
+
+        if (!overlayWindow.isVisible()) overlayWindow.show();
       }
     },
     UPDATE_OVERLAY_POSTION_LOOP_INTERVAL
