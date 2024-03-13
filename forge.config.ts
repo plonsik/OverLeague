@@ -32,14 +32,14 @@ const config: ForgeConfig = {
           entry: "src/electron/preload.ts",
           config: "vite.preload.config.ts",
         },
-        {
-          entry: "src/electron/workers/lobby-status-worker.ts",
-          config: "vite.worker.config.ts",
-        },
-        {
-          entry: "src/electron/workers/player-data-worker.ts",
-          config: "vite.worker.config.ts",
-        },
+        // {
+        //   entry: "src/electron/workers/lobby-status-worker.ts",
+        //   config: "vite.worker.config.ts",
+        // },
+        // {
+        //   entry: "src/electron/workers/player-data-worker.ts",
+        //   config: "vite.worker.config.ts",
+        // },
       ],
       renderer: [
         {

@@ -6,31 +6,31 @@ import { ParticipantData } from "../../types";
 const Index = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleLobbyStatus = (
-      event: Electron.IpcRendererEvent,
-      lobbyData: {
-        queueDescription: string | null;
-        participantsData: ParticipantData[];
-      } | null,
-    ) => {
-      console.log(lobbyData);
-      if (lobbyData !== null) {
-        // @ts-ignore
-        navigate({ to: "lobby-view", state: { lobbyData } });
-      } else {
-      }
-    };
+  // useEffect(() => {
+  //   const handleLobbyStatus = (
+  //     event: Electron.IpcRendererEvent,
+  //     lobbyData: {
+  //       queueDescription: string | null;
+  //       participantsData: ParticipantData[];
+  //     } | null,
+  //   ) => {
+  //     console.log(lobbyData);
+  //     if (lobbyData !== null) {
+  //       // @ts-ignore
+  //       navigate({ to: "lobby-view", state: { lobbyData } });
+  //     } else {
+  //     }
+  //   };
 
-    const unsubscribe = window.electronAPI.receive(
-      "lobby-status",
-      handleLobbyStatus,
-    );
+  //   const unsubscribe = window.electronAPI.receive(
+  //     "lobby-status",
+  //     handleLobbyStatus,
+  //   );
 
-    return () => {
-      unsubscribe();
-    };
-  }, [navigate]);
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, [navigate]);
 
   return (
     <div
