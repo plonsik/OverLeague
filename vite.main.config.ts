@@ -1,5 +1,4 @@
 import type { ConfigEnv, UserConfig } from "vite";
-import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 import { defineConfig, mergeConfig } from "vite";
 import {
   getBuildConfig,
@@ -24,7 +23,7 @@ export default defineConfig((env) => {
         external,
       },
     },
-    plugins: [pluginHotRestart("restart"), TanStackRouterVite()],
+    plugins: [pluginHotRestart("restart")],
     base: "./",
     define,
     resolve: {

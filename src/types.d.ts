@@ -1,12 +1,18 @@
 /// <reference types="vite/client" />
-declare global {
-  interface Window {
-    electronAPI: IElectronAPI;
-  }
+
+export type ElectronAPI = {
+  receive: (
+    channel: string,
+    callback: (
+      event: Electron.IpcRendererEvent,
+      extractedStats: any,
+      participantData: Participant,
+    ) => void,
+  ) => () => void;
 }
 
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
+declare global {
+  interface Window {
+    electronAPI: ElectronAPI;
   }
 }

@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'beaufort': ['Beaufort', 'serif'],
+        beaufort: ["Beaufort", "serif"],
       },
     },
   },

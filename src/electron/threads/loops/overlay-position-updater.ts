@@ -11,6 +11,7 @@ import {
 type StartOverlayPostionLoopParams = {
   overlayWindow: BrowserWindow;
   leagueWindowHWND: LeagueWindowHWND;
+  lobbyStatusInterval: NodeJS.Timeout | null;
 };
 
 type StartOverlayPostionLoop = NodeJS.Timeout | null;
@@ -18,6 +19,7 @@ type StartOverlayPostionLoop = NodeJS.Timeout | null;
 export const startOverlayPostionUpdater = ({
   overlayWindow,
   leagueWindowHWND,
+  lobbyStatusInterval,
 }: StartOverlayPostionLoopParams) => {
   let updateOverlayPositionIntervalId: StartOverlayPostionLoop = setInterval(
     () => {
@@ -28,8 +30,12 @@ export const startOverlayPostionUpdater = ({
 
       if (!isLeagueWindowDimensionsAvailable) {
         overlayWindow.hide();
+
         clearInterval(updateOverlayPositionIntervalId);
+        clearInterval(lobbyStatusInterval);
+
         updateOverlayPositionIntervalId = null;
+        lobbyStatusInterval = null;
       } else {
         const currentlyFocusedWindow = getCurrentForegroundHWND();
         if (

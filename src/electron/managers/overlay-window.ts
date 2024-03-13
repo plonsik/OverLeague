@@ -13,7 +13,7 @@ export const setupOverlayWindow = () => {
     frame: false,
     show: false,
   });
-
+  overlayWindow.webContents.openDevTools()
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     overlayWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
