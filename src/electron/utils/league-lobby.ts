@@ -2,30 +2,13 @@ import type { LCUArguments } from "./lcu";
 import axios from "axios";
 import https from "https";
 
-export type Participant = {
-  activePlatform: string | null;
-  cid: string;
-  game_name: string;
-  game_tag: string;
-  muted: boolean;
-  name: string;
-  pid: string;
-  puuid: string;
-  region: string;
-};
-
-export interface Queue {
-  queueId: number;
-  description: string | null;
-}
-
 const LCU_BASE_URL = "https://127.0.0.1";
 
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false,
 });
 
-export const queues: Queue[] = [
+export const queues = [
   { queueId: 0, description: "Custom game" },
   { queueId: 2, description: "5v5 Blind Pick" },
   { queueId: 4, description: "5v5 Ranked Solo" },
@@ -108,7 +91,7 @@ export const queues: Queue[] = [
   { queueId: 2000, description: "Tutorial 1" },
   { queueId: 2010, description: "Tutorial 2" },
   { queueId: 2020, description: "Tutorial 3" },
-];
+] satisfies Queue[];
 
 export const checkChampionSelectionSession = async (
   LCUArguments: LCUArguments
@@ -117,7 +100,9 @@ export const checkChampionSelectionSession = async (
     `${LCU_BASE_URL}:${LCUArguments.app_port}/lol-champ-select/v1/session`,
     {
       headers: {
-        Authorization: `Basic ${Buffer.from(`riot:${LCUArguments.auth_token}`).toString("base64")}`,
+        Authorization: `Basic ${Buffer.from(
+          `riot:${LCUArguments.auth_token}`
+        ).toString("base64")}`,
       },
       httpsAgent,
       validateStatus: function (status) {
@@ -136,7 +121,9 @@ export const getQueueId = async (
     `${LCU_BASE_URL}:${LCUArguments.app_port}/lol-lobby/v1/parties/gamemode`,
     {
       headers: {
-        Authorization: `Basic ${Buffer.from(`riot:${LCUArguments.auth_token}`).toString("base64")}`,
+        Authorization: `Basic ${Buffer.from(
+          `riot:${LCUArguments.auth_token}`
+        ).toString("base64")}`,
       },
       httpsAgent,
       validateStatus: function (status) {
@@ -151,7 +138,6 @@ export const getQueueId = async (
 export const getGameMode = async (
   LCUArguments: LCUArguments
 ): Promise<string | undefined> => {
-  console.log("extrating gamemode");
   const queueId = await getQueueId(LCUArguments);
 
   const queue = queues.find((queue) => queue.queueId === queueId);
@@ -159,23 +145,49 @@ export const getGameMode = async (
   return queue?.description;
 };
 
-export async function getLobbyParticipants(LCUArguments: LCUArguments) {
+export async function getLobbyParticipants(
+  LCUArguments: LCUArguments
+): Promise<ParticipantsPayload> {
   const response = await axios.get(
     `${LCU_BASE_URL}:${LCUArguments.riotclient_app_port}/chat/v5/participants`,
     {
       headers: {
-        Authorization: `Basic ${Buffer.from(`riot:${LCUArguments.riotclient_auth_token}`).toString("base64")}`,
+        Authorization: `Basic ${Buffer.from(
+          `riot:${LCUArguments.riotclient_auth_token}`
+        ).toString("base64")}`,
       },
       httpsAgent,
     }
   );
 
   return response.data.participants
-    .filter((participant: Participant) =>
-      participant.cid.includes("lol-champ-select")
+    .filter(
+      (participant: {
+        activePlatform: string | null;
+        cid: string;
+        game_name: string;
+        game_tag: string;
+        muted: boolean;
+        name: string;
+        pid: string;
+        puuid: string;
+        region: string;
+      }) => participant.cid.includes("lol-champ-select")
     )
-    .map((participant: Participant) => ({
-      gameName: participant.game_name,
-      gameTag: participant.game_tag,
-    }));
+    .map(
+      (participant: {
+        activePlatform: string | null;
+        cid: string;
+        game_name: string;
+        game_tag: string;
+        muted: boolean;
+        name: string;
+        pid: string;
+        puuid: string;
+        region: string;
+      }) => ({
+        gameName: participant.game_name,
+        gameTag: participant.game_tag,
+      })
+    );
 }

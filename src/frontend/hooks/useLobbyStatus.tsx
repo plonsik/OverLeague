@@ -6,10 +6,10 @@ export const useLobbyStatus = () => {
   const matches = useMatches();
   const isWaitingForLobby = matches[0].pathname === "/";
 
-  const isInLobby = useChannelData<LobbyStatusPayload>(
-    "lobby-status",
-    !isWaitingForLobby
-  );
+  const isInLobby = useChannelData<LobbyStatusPayload>({
+    channel: "lobby-status",
+    defaultState: !isWaitingForLobby,
+  });
 
   const navigate = useNavigate();
 

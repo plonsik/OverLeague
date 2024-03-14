@@ -10,5 +10,18 @@ declare global {
     electronAPI: ElectronAPI;
   }
 
-  export type LobbyStatusPayload = boolean
+  export interface Queue {
+    queueId: number;
+    description: string | null;
+  }
+
+  export type Channel = "lobby-status" | "gamemode" | "participants";
+
+  export type LobbyStatusPayload = boolean;
+  export type GameModePayload = string | undefined;
+  export type Participant = {
+    gameName: string;
+    gameTag: string;
+  };
+  export type ParticipantsPayload = Participant[];
 }

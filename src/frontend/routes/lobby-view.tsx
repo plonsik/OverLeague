@@ -2,9 +2,35 @@ import { motion } from "framer-motion";
 import Opgg from "../../assets/images/opgg.png";
 import { useLobbyStatus } from "../hooks/useLobbyStatus";
 import { pageVariants } from "../app";
+import { useChannelData } from "../hooks/useChannelData";
+import { Player } from "../components/lobby-view/Player";
+import { useCallback } from "react";
 
 export const LobbyView = () => {
   useLobbyStatus();
+
+  const gamemode = useChannelData<GameModePayload>({
+    channel: "gamemode",
+    defaultState: "Custom",
+  });
+
+  const participants = useChannelData<ParticipantsPayload>({
+    channel: "participants",
+    defaultState: [],
+    shouldUpdate: useCallback((previousParticipats, newParticipats) => {
+      if (previousParticipats.length !== newParticipats.length) return true;
+
+      const gameTags1 = previousParticipats.map((item) => item.gameTag).sort();
+      const gameTags2 = newParticipats.map((item) => item.gameTag).sort();
+
+      for (let i = 0; i < gameTags1.length; i++) {
+        if (gameTags1[i] !== gameTags2[i]) return true;
+      }
+
+      return false
+    }, []),
+  });
+
 
   return (
     <motion.div
@@ -16,20 +42,20 @@ export const LobbyView = () => {
     >
       <div className="flex-none">
         <h2 className="text-xl text-white text-center my-2 md:text-2xl">
-          {/* {queueType} */}
+          {gamemode}
         </h2>
       </div>
       <div className="flex-grow flex flex-col justify-evenly gap-4 p-3">
         <div className="flex-grow space-y-4 overflow-auto">
-          {/* {participants.map((participant, index) => (
+          {participants.map(({ gameName, gameTag }, index) => (
             <Player
               key={index}
-              nickname={`${participant[0]} #${participant[1]}`}
+              nickname={`${gameName} #${gameTag}`}
               rank="---"
-              winRatio="---"
+              winRatio={10}
               kda="---"
             />
-          ))} */}
+          ))}
         </div>
         <div className="flex flex-row items-center justify-center gap-8">
           <button

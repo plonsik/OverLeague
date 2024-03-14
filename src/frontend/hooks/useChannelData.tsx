@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
 
-export const useChannelData = <T = any>(channel: string, defaultState: T | null = null) => {
-  const [data, setData] = useState<T | null>(defaultState);
+export const useChannelData = <T = any>({
+  channel,
+  defaultState,
+  shouldUpdate = (prevData: T, newData: T) => true
+}: {
+  channel: Channel;
+  defaultState: T;
+  shouldUpdate?: (prevData: T, newData: T) => boolean;
+}) => {
+  const [data, setData] = useState<T>(defaultState);
 
   useEffect(() => {
     const handler = (newData: T) => {
-      if (newData !== null) {
+      if (newData !== null && shouldUpdate(data, newData)) {
         setData(newData);
       }
     };
@@ -19,3 +27,4 @@ export const useChannelData = <T = any>(channel: string, defaultState: T | null 
 
   return data;
 };
+

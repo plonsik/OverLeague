@@ -19,38 +19,73 @@ export const startLobbyStatusUpdater = ({
   LCUArguments,
   overlayWindow,
 }: LobbyStatusLoopParams) => {
-  let wasInChamionSelection = false;
-  let gameMode: string | undefined = undefined;
+  let wasInChampionSelection = false;
+
+  const currentParticipants: Record<string, Participant> = {};
 
   let lobbyStatusIntervalId: LobbyStatusLoop = setInterval(async () => {
-    const isInChamionSelection = await checkChampionSelectionSession(
+    const isInChampionSelection = await checkChampionSelectionSession(
       LCUArguments
     );
 
-    if (!isInChamionSelection && !wasInChamionSelection) return;
-    if (!isInChamionSelection && wasInChamionSelection) {
-      console.log("Is not in chamption selection");
+    if (!isInChampionSelection && !wasInChampionSelection) return;
+    if (!isInChampionSelection && wasInChampionSelection) {
+      console.log("Is not in champion selection");
 
       sendToChannel<LobbyStatusPayload>(overlayWindow, "lobby-status", false);
 
-      wasInChamionSelection = false;
+      Object.keys(currentParticipants).forEach(
+        (key) => delete currentParticipants[key]
+      );
+
+      wasInChampionSelection = false;
 
       return;
     }
 
-    if (isInChamionSelection && !wasInChamionSelection) {
-      console.log("Is in chamption selection");
+    if (isInChampionSelection && !wasInChampionSelection) {
+      console.log("Is in champion selection");
+
+      const gameMode: string | undefined = await getGameMode(LCUArguments);
 
       sendToChannel<LobbyStatusPayload>(overlayWindow, "lobby-status", true);
+      sendToChannel<GameModePayload>(overlayWindow, "gamemode", gameMode);
     }
 
-    console.log("sending other data");
+    const currentLobbyParticipants = await getLobbyParticipants(LCUArguments);
 
-    //   gameMode = await getGameMode(LCUArguments);
+    currentLobbyParticipants.forEach(({ gameName, gameTag }) => {
+      const key = `${gameName}#${gameTag}`;
 
-    // const lobbyParticipants = await getLobbyParticipants(LCUArguments);
+      if (!currentParticipants[key]) {
+        currentParticipants[key] = { gameName, gameTag };
+        console.log("New participant", gameName, gameTag);
+      }
+    });
 
-    wasInChamionSelection = true;
+    Object.values(currentParticipants).forEach(({ gameName, gameTag }) => {
+      const isAlreadyInLobby = currentLobbyParticipants.find((participant) => {
+        return (
+          participant.gameName === gameName && participant.gameTag === gameTag
+        );
+      });
+
+      if (!isAlreadyInLobby) {
+        const key = `${gameName}#${gameTag}`;
+
+        console.log("Participant left", gameName, gameTag);
+
+        delete currentParticipants[key];
+      }
+    });
+
+    sendToChannel<ParticipantsPayload>(
+      overlayWindow,
+      "participants",
+      Object.values(currentParticipants)
+    );
+
+    wasInChampionSelection = true;
   }, UPDATE_LOBBY_STATUS_LOOP_INTERVAL);
 
   return lobbyStatusIntervalId;

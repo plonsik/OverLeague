@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export const useChannel = <T = any>(channel: string, handler: (data: T) => void) => {
+export const useChannel = <T = any>(channel: Channel, handler: (data: T) => void) => {
   useEffect(() => {
     window.electronAPI.addListener(channel, handler);
 
@@ -9,3 +9,4 @@ export const useChannel = <T = any>(channel: string, handler: (data: T) => void)
     };
   }, [channel, handler]);
 };
+
