@@ -5,6 +5,7 @@ import { startOverlayPostionUpdater } from "./overlay-position-updater";
 import { getLCUArguments, getLCUCmd } from "../../utils/lcu";
 import { startLobbyStatusUpdater } from "./lobby-status-updater";
 import axios from "axios";
+import { sendToChannel } from "../../utils/channel";
 
 export const startLeagueWindowListener = (overlayWindow: BrowserWindow) => {
   let leagueWindowHWND: number | null | undefined;
@@ -24,6 +25,8 @@ export const startLeagueWindowListener = (overlayWindow: BrowserWindow) => {
 
         updateOverlayPositionInterval = null;
         lobbyStatusInterval = null;
+
+        sendToChannel<LobbyStatusPayload>(overlayWindow, "lobby-status", false);
       }
 
       return;

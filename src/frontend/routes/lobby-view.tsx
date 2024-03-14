@@ -1,8 +1,19 @@
+import { motion } from "framer-motion";
 import Opgg from "../../assets/images/opgg.png";
+import { useLobbyStatus } from "../hooks/useLobbyStatus";
+import { pageVariants } from "../app";
 
 export const LobbyView = () => {
+  useLobbyStatus();
+
   return (
-    <div className="flex flex-col h-full">
+    <motion.div
+      initial="initial"
+      animate="in"
+      exit="out"
+      variants={pageVariants}
+      className="flex flex-col h-full"
+    >
       <div className="flex-none">
         <h2 className="text-xl text-white text-center my-2 md:text-2xl">
           {/* {queueType} */}
@@ -36,6 +47,6 @@ export const LobbyView = () => {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

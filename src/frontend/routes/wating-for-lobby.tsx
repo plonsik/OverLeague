@@ -1,13 +1,18 @@
-import { useEffect } from "react";
+import { pageVariants } from "../app";
+import { useLobbyStatus } from "../hooks/useLobbyStatus";
+import { motion } from "framer-motion";
 
 export const WaitingForLobby = () => {
-  window.electronAPI.receive('lobby-status', console.log)
-  useEffect(() => {
-    
-  }, []);
+  useLobbyStatus();
 
   return (
-    <div className="flex flex-col h-full border-t-2 border-t-[#785a28] border-l border-l-[#1e282d]">
+    <motion.div
+      initial="initial"
+      animate="in"
+      exit="out"
+      variants={pageVariants}
+      className="flex flex-col h-full border-t-2 border-t-[#785a28] border-l border-l-[#1e282d]"
+    >
       <div className="h-[20%] text-[#cdfafa] flex justify-center items-center font-[Beaufort, serif]">
         <h2 className="text-3xl">OverLeague</h2>
       </div>
@@ -25,6 +30,6 @@ export const WaitingForLobby = () => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

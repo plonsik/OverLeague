@@ -1,7 +1,10 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 
 contextBridge.exposeInMainWorld("electronAPI", {
-  receive: (channel: string, cb: (...args: any) => any): void => {
+  addListener: (channel: string, cb: (...args: any) => void): void => {
     ipcRenderer.on(channel, (_, ...args) => cb(...args));
+  },
+  removeListener: (channel: string, cb: (...args: any) => void): void => {
+    ipcRenderer.removeListener(channel, cb);
   },
 });
